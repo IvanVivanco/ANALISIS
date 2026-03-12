@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deteco IC SA - Gestión Predictiva EPP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        
+        /* Estilos para las filas de grupo (Áreas) */
+        .area-header { background-color: #f1f5f9; border-top: 2px solid #e2e8f0; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="mb-4 sm:mb-0">
+                <h1 class="text-2xl font-bold tracking-tight text-blue-400">DETECO <span class="text-white font-light">IC SA</span></h1>
+                <p class="text-xs text-slate-400 uppercase tracking-widest mt-1">Logística & Adquisiciones • Control de EPP</p>
+                <p class="text-xs text-slate-500 mt-1">Encargado: Iván Vivanco (Base Lampa)</p>
+            </div>
+            <div class="text-right bg-slate-800 px-4 py-2 rounded-lg border border-slate-700">
+                <span class="text-xs text-slate-400 uppercase block">Dotación Activa</span>
+                <span class="text-2xl font-bold text-emerald-400">49 <span class="text-sm font-normal text-slate-300">Trabajadores</span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- NUEVA SECCIÓN: COMPARATIVO ESTRATÉGICO -->
+        <div class="mb-8">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Impacto Gerencial: Modelo Histórico vs. Nuevo Orden
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Modelo Anterior -->
+                <div class="glass-panel p-5 rounded-xl border border-slate-200 opacity-80 bg-slate-50">
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Mes Anterior (Sin Control)</p>
+                    <h2 id="comp-anterior" class="text-2xl font-bold text-slate-700 mt-2">$0</h2>
+                    <ul class="text-xs text-slate-500 mt-3 space-y-1">
+                        <li>⚠️ Compras reactivas (quiebre de stock)</li>
+                        <li>⚠️ Sobreprecio por urgencias (+35% est.)</li>
+                        <li>⚠️ Asignación no parametrizada</li>
+                    </ul>
+                </div>
+                
+                <!-- Nuevo Modelo -->
+                <div class="glass-panel p-5 rounded-xl border border-blue-200 bg-blue-50 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-blue-100 rounded-bl-full -z-10"></div>
+                    <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide">Nuevo Orden (Actual)</p>
+                    <h2 id="comp-actual" class="text-3xl font-black text-blue-800 mt-2">$0</h2>
+                    <ul class="text-xs text-blue-600 mt-3 space-y-1 font-medium">
+                        <li>✅ Regla estricta: 7 Días de Seguridad</li>
+                        <li>✅ Compras planificadas APU</li>
+                        <li>✅ Control por Área/Especialidad</li>
+                    </ul>
+                </div>
+
+                <!-- Ahorro -->
+                <div class="glass-panel p-5 rounded-xl border border-emerald-200 bg-emerald-50 relative overflow-hidden">
+                    <div class="absolute right-0 bottom-0 opacity-10"><svg class="w-24 h-24 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path></svg></div>
+                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide relative z-10">Ahorro Mensual Proyectado</p>
+                    <h2 id="comp-ahorro" class="text-3xl font-black text-emerald-700 mt-2 relative z-10">$0</h2>
+                    <p class="text-xs text-emerald-600 mt-2 relative z-10 bg-white/60 inline-block px-2 py-1 rounded font-bold">Optimización directa a la rentabilidad</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: KPIs OPERATIVOS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="glass-panel p-4 rounded-xl shadow-sm border border-slate-200">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Total a Comprar (Mes)</p>
+                <h2 id="kpi-unidades" class="text-2xl font-bold text-slate-800 mt-1">0 Unidades</h2>
+            </div>
+            <div class="glass-panel p-4 rounded-xl shadow-sm border border-slate-200">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Costo Promedio Diario</p>
+                <h2 id="kpi-apu" class="text-2xl font-bold text-slate-800 mt-1">$0 <span class="text-sm font-normal text-slate-500">/ trab / día</span></h2>
+            </div>
+            <div class="glass-panel p-4 rounded-xl shadow-sm border-l-4 border-l-orange-500 bg-orange-50/50">
+                <div class="flex justify-between items-start">
+                    <p class="text-xs font-semibold text-orange-700 uppercase tracking-wide">Alerta de Quiebre</p>
+                </div>
+                <h2 id="kpi-stock" class="text-2xl font-bold text-orange-800 mt-1">0 Ítems</h2>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: GRÁFICO Y TABLA AGRUPADA -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Panel Lateral: Gráfico por Áreas -->
+            <div class="lg:col-span-1 glass-panel p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                <h3 class="font-semibold text-slate-800 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                    Distribución de Gasto por Área
+                </h3>
+                <div class="flex-grow flex items-center justify-center relative min-h-[250px]">
+                    <canvas id="gastoChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Panel Principal: Matriz Interactiva -->
+            <div class="lg:col-span-2 glass-panel rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                <div class="p-5 bg-white border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h3 class="font-semibold text-slate-800 text-lg">Matriz Operativa por Áreas</h3>
+                        <p class="text-sm text-slate-500">Agrupa automáticamente los ítems según el texto de su área.</p>
+                    </div>
+                    <!-- BOTÓN AGREGAR ÍTEM -->
+                    <button onclick="agregarItem()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm flex items-center flex-shrink-0">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Agregar Insumo
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto flex-grow">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="px-5 py-3 font-medium w-64">Nombre EPP</th>
+                                <th class="px-3 py-3 font-medium text-center w-20">Usuarios</th>
+                                <th class="px-4 py-3 font-medium w-28 text-center">Precio</th>
+                                <th class="px-4 py-3 font-medium w-24 text-center">Vida Útil</th>
+                                <th class="px-4 py-3 font-medium w-24 text-center">Stock</th>
+                                <th class="px-4 py-3 font-medium text-center bg-blue-50/50">Mes (Unid.)</th>
+                                <th class="px-4 py-3 font-medium text-center bg-orange-50/50">Mín. (7D)</th>
+                                <th class="px-4 py-3 font-medium text-center w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-body" class="text-sm bg-white">
+                            <!-- Filas generadas por JS dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER / ACCIONES -->
+        <div class="mt-8 flex justify-end gap-4">
+            <button onclick="exportarSimulacion()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Exportar Reporte
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // --- 1. CONFIGURACIÓN Y DATOS MAESTROS DETECO ---
+        const DIAS_HABILES = 22;
+        const DOTACION_TOTAL = 49;
+        
+        let chartInstance = null;
+
+        // Base de datos inyectada con el nuevo campo "area"
+        const datosEPP = [
+            { id: 1, area: 'Enfierradura y Hormigón', nombre: 'Guante Nitrilo NBR', precioNeto: 1890, vidaReal: 12, usuarios: 20, stockActual: 15 },
+            { id: 2, area: 'Enfierradura y Hormigón', nombre: 'Tapón Auditivo', precioNeto: 250, vidaReal: 5, usuarios: 20, stockActual: 100 },
+            { id: 3, area: 'Carpintería y Terminaciones', nombre: 'Guante Cabritilla', precioNeto: 1130, vidaReal: 7, usuarios: 16, stockActual: 10 },
+            { id: 4, area: 'Uso General / Staff', nombre: 'Antiparras Claras', precioNeto: 1840, vidaReal: 15, usuarios: 49, stockActual: 80 },
+            { id: 5, area: 'Soldadura y Riesgo Específico', nombre: 'Guante Descarne', precioNeto: 3230, vidaReal: 12, usuarios: 5, stockActual: 2 },
+            { id: 6, area: 'Soldadura y Riesgo Específico', nombre: 'Guante Antivibración', precioNeto: 4100, vidaReal: 25, usuarios: 5, stockActual: 4 },
+            { id: 7, area: 'Eléctricos y Carguío', nombre: 'Guante Multiflex', precioNeto: 385, vidaReal: 6, usuarios: 8, stockActual: 25 }
+        ];
+
+        // Paleta para gráficos
+        const paletaColores = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#64748b', '#0ea5e9', '#ec4899'];
+
+        // --- 2. MOTOR DE CÁLCULOS ---
+        const formatearMoneda = (valor) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(valor);
+
+        function calcularConsumoMes(item) {
+            return item.vidaReal > 0 ? Math.ceil((item.usuarios * DIAS_HABILES) / item.vidaReal) : 0;
+        }
+
+        function calcularStockMinimo(item) {
+            return item.vidaReal > 0 ? Math.ceil((item.usuarios * 7) / item.vidaReal) : 0;
+        }
+
+        // --- 3. FUNCIONES CRUD ---
+        function agregarItem() {
+            const nuevoId = datosEPP.length > 0 ? Math.max(...datosEPP.map(d => d.id)) + 1 : 1;
+            
+            datosEPP.push({
+                id: nuevoId,
+                area: 'Nueva Área (Editar)',
+                nombre: 'Nuevo Insumo',
+                precioNeto: 0,
+                vidaReal: 1, 
+                usuarios: 1,
+                stockActual: 0
+            });
+            actualizarDatos();
+        }
+
+        function eliminarItem(index) {
+            if(confirm('¿Estás seguro de que deseas eliminar este ítem?')) {
+                datosEPP.splice(index, 1);
+                actualizarDatos();
+            }
+        }
+
+        function actualizarDatos() {
+            let gastoTotalNeto = 0;
+            let itemsCriticos = 0;
+            let totalUnidadesMes = 0;
+            
+            // Agrupar datos por Área
+            const datosAgrupados = {};
+            datosEPP.forEach((item, originalIndex) => {
+                if(!datosAgrupados[item.area]) datosAgrupados[item.area] = [];
+                datosAgrupados[item.area].push({ item, originalIndex });
+            });
+
+            const tbody = document.getElementById('tabla-body');
+            tbody.innerHTML = '';
+
+            // Renderizar la tabla agrupada
+            Object.keys(datosAgrupados).forEach(nombreArea => {
+                
+                // 1. Fila de Encabezado del Área
+                const trArea = document.createElement('tr');
+                trArea.className = 'area-header';
+                trArea.innerHTML = `
+                    <td colspan="8" class="px-5 py-2 font-bold text-slate-700">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            <!-- Input para cambiar el nombre del área de todos los hijos a la vez se requeriría JS extra, aquí editamos por ítem -->
+                            Área: ${nombreArea}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(trArea);
+
+                // 2. Filas de los EPPs de esta Área
+                datosAgrupados[nombreArea].forEach(data => {
+                    const { item, originalIndex } = data;
+                    
+                    const consumoMes = calcularConsumoMes(item);
+                    const stockMin = calcularStockMinimo(item);
+                    const gastoItemMes = consumoMes * item.precioNeto;
+                    
+                    gastoTotalNeto += gastoItemMes;
+                    totalUnidadesMes += consumoMes;
+                    
+                    const esCritico = item.stockActual < stockMin;
+                    if (esCritico) itemsCriticos++;
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors';
+                    tr.innerHTML = `
+                        <td class="px-5 py-3">
+                            <input type="text" data-index="${originalIndex}" data-field="nombre" value="${item.nombre}" 
+                                class="w-full bg-transparent font-semibold text-slate-800 outline-none border-b border-transparent focus:border-blue-400 focus:bg-white mb-1" placeholder="Nombre EPP">
+                            <input type="text" data-index="${originalIndex}" data-field="area" value="${item.area}" 
+                                class="w-full bg-transparent text-xs text-slate-500 outline-none border-b border-transparent focus:border-blue-400 focus:bg-white" placeholder="Área" title="Cambia este texto para reubicar el ítem de área">
+                        </td>
+                        <td class="px-3 py-3">
+                            <input type="number" data-index="${originalIndex}" data-field="usuarios" value="${item.usuarios}" 
+                                class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 px-1 text-center text-sm outline-none">
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="relative flex justify-center">
+                                <span class="absolute left-2 top-1 text-slate-400 text-xs">$</span>
+                                <input type="number" data-index="${originalIndex}" data-field="precioNeto" value="${item.precioNeto}" 
+                                    class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 pl-5 pr-1 text-sm outline-none">
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="number" data-index="${originalIndex}" data-field="vidaReal" value="${item.vidaReal}" 
+                                class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 px-1 text-center text-sm outline-none">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="number" data-index="${originalIndex}" data-field="stockActual" value="${item.stockActual}" 
+                                class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 px-1 text-center text-sm font-bold text-slate-700 outline-none shadow-inner">
+                        </td>
+                        
+                        <!-- Columnas Informativas -->
+                        <td class="px-4 py-3 text-center bg-blue-50/30">
+                            <span class="font-bold text-blue-800">${consumoMes}</span>
+                        </td>
+                        <td class="px-4 py-3 text-center bg-orange-50/30">
+                            <span class="font-bold ${esCritico ? 'text-red-600 animate-pulse' : 'text-emerald-600'}">${stockMin}</span>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <button onclick="eliminarItem(${originalIndex})" class="text-slate-300 hover:text-red-500 transition-colors p-1" title="Eliminar ítem">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+
+            // --- ACTUALIZAR COMPARATIVO ESTRATÉGICO ---
+            const gastoTotalIva = gastoTotalNeto * 1.19; // El nuevo orden incluye el IVA
+            // Simulamos el Gasto Histórico (Mes Anterior sin control): 
+            // Asumimos un sobrecosto del 35% por pérdida y sobreprecio urgente.
+            const gastoHistoricoIva = gastoTotalIva * 1.35; 
+            const ahorroProyectado = gastoHistoricoIva - gastoTotalIva;
+
+            document.getElementById('comp-anterior').innerText = formatearMoneda(gastoHistoricoIva);
+            document.getElementById('comp-actual').innerText = formatearMoneda(gastoTotalIva);
+            document.getElementById('comp-ahorro').innerText = formatearMoneda(ahorroProyectado);
+
+            // --- ACTUALIZAR KPIs OPERATIVOS ---
+            const costoPromedioDia = (gastoTotalNeto / DIAS_HABILES) / DOTACION_TOTAL;
+
+            document.getElementById('kpi-unidades').innerText = `${totalUnidadesMes} Unidades`;
+            document.getElementById('kpi-apu').innerHTML = `${formatearMoneda(costoPromedioDia)} <span class="text-sm font-normal text-slate-500">/ trab / día</span>`;
+            
+            const kpiStock = document.getElementById('kpi-stock');
+            kpiStock.innerText = `${itemsCriticos} Ítem${itemsCriticos !== 1 ? 's' : ''}`;
+            if(itemsCriticos > 0) {
+                kpiStock.classList.add('text-red-600');
+                kpiStock.classList.remove('text-orange-800');
+            } else {
+                kpiStock.classList.remove('text-red-600');
+                kpiStock.classList.add('text-emerald-600');
+            }
+
+            // --- ACTUALIZAR GRÁFICO DE BARRAS POR ÁREA ---
+            const labelsGrafico = [];
+            const datosGrafico = [];
+            
+            Object.keys(datosAgrupados).forEach(nombreArea => {
+                let gastoArea = 0;
+                datosAgrupados[nombreArea].forEach(data => {
+                    const cMes = calcularConsumoMes(data.item);
+                    gastoArea += cMes * data.item.precioNeto;
+                });
+                labelsGrafico.push(nombreArea);
+                datosGrafico.push(gastoArea);
+            });
+
+            actualizarGrafico(labelsGrafico, datosGrafico);
+        }
+
+        // --- 4. GRÁFICO (Chart.js) ---
+        function actualizarGrafico(labels, data) {
+            const ctx = document.getElementById('gastoChart').getContext('2d');
+            
+            // Generar colores basados en el número de áreas
+            const bgColors = labels.map((_, i) => paletaColores[i % paletaColores.length]);
+
+            if (chartInstance) {
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets[0].data = data;
+                chartInstance.data.datasets[0].backgroundColor = bgColors;
+                chartInstance.update();
+                return;
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Inversión Neta Mensual ($)',
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderRadius: 4,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { 
+                                font: { size: 10 },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- 5. EVENTOS E INTERACTIVIDAD ---
+        // Delegación de eventos para capturar los inputs editables en la tabla
+        document.getElementById('tabla-body').addEventListener('input', function(e) {
+            if (e.target.tagName === 'INPUT') {
+                const index = e.target.getAttribute('data-index');
+                const field = e.target.getAttribute('data-field');
+                
+                if (e.target.type === 'number') {
+                    let value = parseFloat(e.target.value);
+                    if (isNaN(value) || value < 0) value = 0;
+                    datosEPP[index][field] = value;
+                } else {
+                    datosEPP[index][field] = e.target.value;
+                }
+                
+                // Recalcular todo en vivo
+                actualizarDatos();
+            }
+        });
+
+        function exportarSimulacion() {
+            const btn = document.querySelector('button.bg-emerald-600');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Procesando Reporte...`;
+            
+            setTimeout(() => {
+                alert("¡Reporte consolidado con éxito! \n\nLos datos históricos y el nuevo APU agrupado por áreas se han exportado según la matriz.");
+                btn.innerHTML = originalText;
+            }, 1000);
+        }
+
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', actualizarDatos);
+
+    </script>
+</body>
+</html>
