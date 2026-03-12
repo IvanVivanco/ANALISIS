@@ -136,13 +136,12 @@
                     <tr class="border-b-2 border-slate-200 bg-white text-slate-400 text-[10px] uppercase tracking-wider font-bold">
                         <th class="px-4 py-3 w-10 text-center"></th>
                         <th class="px-2 py-3 w-[280px]">Descripción (EPP)</th>
-                        <th class="px-2 py-3 text-center">Usuarios</th>
                         <th class="px-2 py-3">Precio Neto</th>
                         <th class="px-2 py-3 text-center text-slate-700" title="¿Cuántas veces a la semana se le cambia a 1 trabajador?">Cambios x Sem.</th>
                         <th class="px-3 py-3 text-center">Meta Mes</th>
                         <th class="px-3 py-3 text-center text-slate-500" title="Inventario mínimo intocable para no paralizar faena (Cobertura de 14 días)">Stock Crítico (14D)</th>
                         <th class="px-4 py-3 text-center text-slate-800">Req. Total (Unid)</th>
-                        <th class="px-5 py-3 text-right text-slate-600">Ppto. Req. ($)</th>
+                        <th class="px-5 py-3 text-right text-slate-600 pr-12">Ppto. Req. ($)</th>
                     </tr>
                 </thead>
                 <tbody id="table-body" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -197,7 +196,7 @@
                         <th class="px-4 py-3 text-center" title="Días calculados según los cambios x semana ingresados">Días Reales (Ref)</th>
                         <th class="px-4 py-3 text-center">Costo / Sem (x Usuario)</th>
                         <th class="px-4 py-3 text-center">Costo / Mes (x Usuario)</th>
-                        <th class="px-6 py-3 text-right text-slate-600">Gasto Total Área / Mes ($)</th>
+                        <th class="px-6 py-3 text-right text-slate-600 pr-12">Gasto Total Área / Mes ($)</th>
                     </tr>
                 </thead>
                 <tbody id="hourly-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -280,7 +279,8 @@
     </div>
 
     <script>
-        const areasConfig = [
+        // Array de áreas donde indicamos la cantidad de usuarios, este número se edita en la interfaz
+        let areasConfigData = [
             { name: "Carguío", users: 2, items: ["Guante Multiflex", "Antiparras", "Casco", "Botín Seguridad"] },
             { name: "Carpintería", users: 6, items: ["Guante Cabritilla", "Guante Multiflex", "Antiparras", "Casco", "Botín Seguridad"] },
             { name: "Eléctrico", users: 7, items: ["Guante Cabritilla", "Guante Multiflex", "Antiparras", "Casco", "Botín Seguridad"] },
@@ -296,7 +296,7 @@
             "Guante Nitrilo": { price: 1890, changesPerWeek: 0.5, stock: 10, pastConsumption: 25 },
             "Rodillera": { price: 8500, changesPerWeek: 0.1, stock: 2, pastConsumption: 2 },
             "Antiparras": { price: 1840, changesPerWeek: 0.3, stock: 8, pastConsumption: 25 },
-            "Casco": { price: 1645, changesPerWeek: 0.02, stock: 5, pastConsumption: 5 },
+            "Casco": { price: 3410, changesPerWeek: 0.02, stock: 5, pastConsumption: 5 },
             "Botín Seguridad": { price: 24500, changesPerWeek: 0.04, stock: 5, pastConsumption: 4 }
         };
 
@@ -311,7 +311,7 @@
         let eppData = [];
         let idCounter = 1;
         
-        areasConfig.forEach(area => {
+        areasConfigData.forEach(area => {
             area.items.forEach(itemName => {
                 const epp = itemMaster[itemName];
                 if(epp) {
@@ -320,8 +320,7 @@
                         name: itemName,
                         area: area.name,
                         price: epp.price,
-                        changesPerWeek: epp.changesPerWeek,
-                        users: area.users
+                        changesPerWeek: epp.changesPerWeek
                     });
                 }
             });
@@ -350,26 +349,41 @@
             const semanasMes = 4.4; 
             const semanasReserva = 2; 
 
+            // Construir áreas únicas
             const uniqueAreas = [...new Set(eppData.map(item => item.area))].sort((a, b) => a === "Toda la Planta" ? 1 : b === "Toda la Planta" ? -1 : a.localeCompare(b));
 
             // --- 1. PROCESAR Y DIBUJAR ÁREAS (DEMANDA) ---
-            uniqueAreas.forEach(area => {
-                // Header Módulo 1 (Requerimientos)
+            uniqueAreas.forEach(areaName => {
+                
+                // Obtener datos del área desde config (para los usuarios)
+                let areaObj = areasConfigData.find(a => a.name === areaName);
+                if (!areaObj) {
+                    areaObj = { name: areaName, users: 1, items: [] }; // Fallback para áreas nuevas
+                    areasConfigData.push(areaObj);
+                }
+                const numUsers = areaObj.users;
+
+                // Header Módulo 1 (Requerimientos) - Usuarios integrados al header
                 const areaHeader = document.createElement('tr');
                 areaHeader.innerHTML = `
-                    <td colspan="8" class="bg-slate-100 border-y border-slate-300 py-2 px-6">
-                        <div class="flex items-center justify-between w-full">
+                    <td colspan="7" class="bg-slate-100 border-y border-slate-300 py-2 px-6">
+                        <div class="flex items-center gap-4 w-full">
                             <div class="flex items-center gap-2">
                                 <span class="text-slate-400 text-xs">└</span>
-                                <input type="text" class="input-clean uppercase font-bold text-slate-800 text-xs tracking-widest w-64" 
-                                    value="${area}" onchange="updateAreaName('${area}', this.value)" placeholder="Nombre del Área">
+                                <input type="text" class="input-clean uppercase font-bold text-slate-800 text-xs tracking-widest w-40" 
+                                    value="${areaName}" onchange="updateAreaName('${areaName}', this.value)" placeholder="Nombre del Área">
                             </div>
-                            <button onclick="addNewEPP('${area}')" class="text-slate-500 hover:text-slate-800 text-[10px] font-bold uppercase tracking-widest transition">+ Añadir Ítem</button>
+                            <div class="flex items-center gap-2 bg-white px-3 py-1 rounded-md border border-slate-200">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                <span class="text-xs text-slate-500 font-medium">Trabajadores:</span>
+                                <input type="number" min="0" class="input-clean text-center font-bold text-brand w-12 text-sm p-0 m-0" value="${numUsers}" onchange="updateAreaUsers('${areaName}', this.value)">
+                            </div>
+                            <button onclick="addNewEPP('${areaName}')" class="text-slate-500 hover:text-slate-800 text-[10px] font-bold uppercase tracking-widest transition ml-auto">+ Añadir Ítem</button>
                         </div>
                     </td>
-                    <td class="bg-slate-100 border-y border-slate-300 py-2 px-6 text-right">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none mb-1">Total Ppto. Req.</span>
-                        <span class="area-subtotal-req font-black text-slate-700 text-sm">$0</span>
+                    <td class="bg-slate-100 border-y border-slate-300 py-2 pr-12 text-right">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none mb-1">Ppto. Req. Área</span>
+                        <span class="area-subtotal-req font-black text-brand text-sm">$0</span>
                     </td>`;
                 tbody.appendChild(areaHeader);
                 const subtotalReqSpan = areaHeader.querySelector('.area-subtotal-req');
@@ -378,11 +392,11 @@
                 const hrHeader = document.createElement('tr');
                 hrHeader.innerHTML = `
                     <td colspan="4" class="bg-slate-100 border-y border-slate-300 px-6 py-2 text-xs font-bold text-slate-800 uppercase tracking-widest">
-                        <span class="text-slate-400 mr-2">└</span> ${area}
+                        <span class="text-slate-400 mr-2">└</span> ${areaName} <span class="text-[10px] text-slate-400 font-medium ml-2">(${numUsers} trab.)</span>
                     </td>
-                    <td class="bg-slate-100 border-y border-slate-300 px-6 py-2 text-right">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none mb-1">Total Área / Mes</span>
-                        <span class="area-subtotal-cost text-sm font-black text-brand tracking-widest">$0</span>
+                    <td class="bg-slate-100 border-y border-slate-300 py-2 pr-12 text-right">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none mb-1">Gasto Total Área</span>
+                        <span class="area-subtotal-cost text-sm font-black text-brand">$0</span>
                     </td>`;
                 hourlyTbody.appendChild(hrHeader);
                 const subtotalCostSpan = hrHeader.querySelector('.area-subtotal-cost');
@@ -390,12 +404,12 @@
                 let areaTotalReq = 0;
                 let areaTotalGastoMes = 0;
 
-                const itemsInArea = eppData.filter(item => item.area === area);
+                const itemsInArea = eppData.filter(item => item.area === areaName);
                 itemsInArea.forEach(item => {
                     
                     // Cálculo Demanda Pura (Módulo 1)
-                    const consumo = item.changesPerWeek * semanasMes * item.users;
-                    const stockMin = item.changesPerWeek * semanasReserva * item.users;
+                    const consumo = item.changesPerWeek * semanasMes * numUsers;
+                    const stockMin = item.changesPerWeek * semanasReserva * numUsers;
                     const reqTotal = Math.ceil(consumo) + Math.ceil(stockMin);
                     const presupuestoReq = reqTotal * item.price;
                     const gastoTeorico = consumo * item.price;
@@ -410,22 +424,21 @@
                     globalDemandDict[item.name].metaAPU += consumo;
 
                     totalGastoTeorico += gastoTeorico; 
-                    if(gastoTeoricoPorArea[area] === undefined) gastoTeoricoPorArea[area] = 0; 
-                    gastoTeoricoPorArea[area] += gastoTeorico;
+                    if(gastoTeoricoPorArea[areaName] === undefined) gastoTeoricoPorArea[areaName] = 0; 
+                    gastoTeoricoPorArea[areaName] += gastoTeorico;
 
-                    // Render Tabla 1.1 (Requerimientos, sin stock)
+                    // Render Tabla 1.1 (Requerimientos, sin stock ni col de usuarios repetida)
                     const row = document.createElement('tr');
                     row.className = `transition-colors group bg-white hover:bg-slate-50`;
                     row.innerHTML = `
                         <td class="px-4 py-2 text-center"><button onclick="deleteEPP(${item.id})" class="btn-delete text-slate-300 hover:text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td>
                         <td class="px-2 py-2"><input type="text" class="input-clean font-medium text-slate-700" value="${item.name}" onchange="updateData(${item.id}, 'name', this.value)"></td>
-                        <td class="px-2 py-2"><input type="number" min="0" class="input-clean text-center text-slate-500" value="${item.users}" onchange="updateData(${item.id}, 'users', this.value)"></td>
                         <td class="px-2 py-2"><div class="flex items-center"><span class="text-slate-300 pl-2">$</span><input type="number" min="0" class="input-clean font-mono text-sm text-slate-600" value="${item.price}" onchange="updateData(${item.id}, 'price', this.value)"></div></td>
                         <td class="px-2 py-2 bg-slate-50/50"><input type="number" min="0" step="0.01" class="input-clean text-center font-bold text-slate-700 w-16 mx-auto block" value="${item.changesPerWeek}" onchange="updateData(${item.id}, 'changesPerWeek', this.value)"></td>
                         <td class="px-3 py-2 text-center text-slate-500">${consumo.toFixed(1)}</td>
                         <td class="px-3 py-2 text-center text-slate-400">${Math.ceil(stockMin)}</td>
                         <td class="px-4 py-2 text-center font-black text-slate-800">${reqTotal}</td>
-                        <td class="px-5 py-2 text-right"><span class="font-bold text-slate-500">$${formatMoney(Math.round(presupuestoReq))}</span></td>
+                        <td class="px-5 py-2 text-right pr-12"><span class="font-bold text-slate-500">$${formatMoney(Math.round(presupuestoReq))}</span></td>
                     `;
                     tbody.appendChild(row);
 
@@ -433,7 +446,7 @@
                     const diasVidaRealRef = item.changesPerWeek > 0 ? (5 / item.changesPerWeek) : 365;
                     const costoSemanaUnit = item.changesPerWeek * item.price;
                     const costoMesUnit = costoSemanaUnit * semanasMes;
-                    const gastoAreaMes = costoMesUnit * item.users;
+                    const gastoAreaMes = costoMesUnit * numUsers;
 
                     areaTotalGastoMes += gastoAreaMes;
 
@@ -444,7 +457,7 @@
                         <td class="px-4 py-3 text-center font-mono text-slate-500">${diasVidaRealRef.toFixed(1)}</td>
                         <td class="px-4 py-3 text-center font-mono text-slate-600">$${formatMoney(Math.round(costoSemanaUnit))}</td>
                         <td class="px-4 py-3 text-center font-mono text-slate-800">$${formatMoney(Math.round(costoMesUnit))}</td>
-                        <td class="px-6 py-3 text-right"><span class="font-bold text-brand">$${formatMoney(Math.round(gastoAreaMes))}</span></td>
+                        <td class="px-6 py-3 text-right pr-12"><span class="font-bold text-slate-500">$${formatMoney(Math.round(gastoAreaMes))}</span></td>
                     `;
                     hourlyTbody.appendChild(hrRow);
                 });
@@ -554,9 +567,11 @@
 
             let estimacionHistoricoArea = {};
             uniqueAreas.forEach(area => {
+                const areaObj = areasConfigData.find(a => a.name === area);
+                const numUsers = areaObj ? areaObj.users : 1;
                 const itemsInArea = eppData.filter(item => item.area === area);
                 itemsInArea.forEach(item => {
-                    const pesoArea = item.users / (globalDemandDict[item.name]?.req || 1);
+                    const pesoArea = numUsers / (globalDemandDict[item.name]?.req || 1);
                     const histoAsignado = (globalPastConsumptionDict[item.name] || 0) * pesoArea;
                     if(estimacionHistoricoArea[area] === undefined) estimacionHistoricoArea[area] = 0;
                     estimacionHistoricoArea[area] += (histoAsignado * item.price);
@@ -566,6 +581,7 @@
             renderCharts(gastoTeoricoPorArea, estimacionHistoricoArea, totalComprarNeto, totalGastoTeorico, totalGastoHistorico);
         }
 
+        // --- FUNCIONES DE ACTUALIZACIÓN ---
         function updateGlobalStock(itemName, value) {
             const num = parseFloat(value);
             if (!isNaN(num) && num >= 0) {
@@ -578,6 +594,15 @@
             const num = parseFloat(value);
             if (!isNaN(num) && num >= 0) {
                 globalPastConsumptionDict[itemName] = num;
+            }
+            calculateAndRender();
+        }
+
+        function updateAreaUsers(areaName, value) {
+            const num = parseInt(value);
+            if (!isNaN(num) && num >= 0) {
+                let areaObj = areasConfigData.find(a => a.name === areaName);
+                if (areaObj) areaObj.users = num;
             }
             calculateAndRender();
         }
@@ -602,14 +627,19 @@
         function updateAreaName(oldArea, newArea) {
             if(!newArea.trim()) return;
             eppData.forEach(item => { if (item.area === oldArea) item.area = newArea.trim(); });
+            let areaObj = areasConfigData.find(a => a.name === oldArea);
+            if (areaObj) areaObj.name = newArea.trim();
             calculateAndRender();
         }
         
         function addNewArea() { 
+            const newAreaName = "NUEVA ÁREA";
+            areasConfigData.push({ name: newAreaName, users: 1, items: [] });
+            
             const newName = "Nuevo EPP";
             if (globalStockDict[newName] === undefined) globalStockDict[newName] = 0;
             if (globalPastConsumptionDict[newName] === undefined) globalPastConsumptionDict[newName] = 0;
-            eppData.push({ id: Date.now(), name: newName, area: "NUEVA ÁREA", price: 0, changesPerWeek: 1, users: 1 }); 
+            eppData.push({ id: Date.now(), name: newName, area: newAreaName, price: 0, changesPerWeek: 1 }); 
             calculateAndRender(); 
         }
         
@@ -617,7 +647,7 @@
             const newName = "Nuevo Insumo";
             if (globalStockDict[newName] === undefined) globalStockDict[newName] = 0;
             if (globalPastConsumptionDict[newName] === undefined) globalPastConsumptionDict[newName] = 0;
-            eppData.push({ id: Date.now(), name: newName, area: areaName, price: 0, changesPerWeek: 1, users: 1 }); 
+            eppData.push({ id: Date.now(), name: newName, area: areaName, price: 0, changesPerWeek: 1 }); 
             calculateAndRender(); 
         }
         
@@ -666,6 +696,9 @@
             });
         }
 
+        // ==========================================
+        // INTEGRACIÓN CON GEMINI AI 
+        // ==========================================
         function openAIModal() {
             document.getElementById('ai-modal').classList.add('active');
             const savedKey = localStorage.getItem('gemini_api_key');
@@ -760,7 +793,7 @@
                 startRow++;
                 const headerRow1 = ws.getRow(startRow);
                 headerRow1.values = [
-                    'ÁREA / CARGO', 'DESCRIPCIÓN EPP', 'USUARIOS', 'PRECIO NETO ($)', 
+                    'ÁREA / CARGO', 'USUARIOS ÁREA', 'DESCRIPCIÓN EPP', 'PRECIO NETO ($)', 
                     'CAMBIOS/SEM', 'META MES APU', 'STOCK CRÍTICO (14D)', 'REQ. TOTAL (UNID)', 'PPTO. REQUERIDO ($)'
                 ];
                 headerRow1.eachCell((cell) => {
@@ -773,10 +806,13 @@
                 
                 sortedData.forEach((item) => {
                     const row = ws.getRow(startRow);
+                    const areaObj = areasConfigData.find(a => a.name === item.area);
+                    const users = areaObj ? areaObj.users : 1;
+                    
                     row.values = [
-                        item.area, item.name, item.users, item.price, item.changesPerWeek,
-                        { formula: `E${startRow}*4.4*C${startRow}` }, 
-                        { formula: `E${startRow}*2*C${startRow}` }, 
+                        item.area, users, item.name, item.price, item.changesPerWeek,
+                        { formula: `E${startRow}*4.4*B${startRow}` }, 
+                        { formula: `E${startRow}*2*B${startRow}` }, 
                         { formula: `CEILING(F${startRow}, 1) + CEILING(G${startRow}, 1)` }, 
                         { formula: `H${startRow}*D${startRow}` } 
                     ];
@@ -813,7 +849,7 @@
                     row.values = [
                         itemName,
                         precio,
-                        { formula: `SUMIF(B20:B${endAreaRow}, A${startRow}, H20:H${endAreaRow})` }, 
+                        { formula: `SUMIF(C20:C${endAreaRow}, A${startRow}, H20:H${endAreaRow})` }, 
                         globalStockDict[itemName], 
                         { formula: `MAX(0, C${startRow} - D${startRow})` }, 
                         { formula: `E${startRow}*B${startRow}` } 
@@ -830,7 +866,7 @@
                 startRow++;
                 const headerRowCosto = ws.getRow(startRow);
                 headerRowCosto.values = [
-                    'ÁREA / CARGO', 'DESCRIPCIÓN EPP', 'DÍAS REALES (REF)', 'COSTO/SEM (X USU)', 'COSTO/MES (X USU)', 'GASTO ÁREA / MES ($)'
+                    'ÁREA / CARGO', 'USUARIOS', 'DESCRIPCIÓN EPP', 'DÍAS REALES (REF)', 'COSTO/SEM (X USU)', 'COSTO/MES (X USU)', 'GASTO ÁREA / MES ($)'
                 ];
                 headerRowCosto.eachCell((cell) => {
                     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
@@ -840,16 +876,18 @@
                 startRow++;
                 sortedData.forEach((item, idx) => {
                     const row = ws.getRow(startRow);
+                    const areaObj = areasConfigData.find(a => a.name === item.area);
+                    const users = areaObj ? areaObj.users : 1;
                     const costoSem = item.changesPerWeek * item.price;
                     
                     row.values = [
-                        item.area, item.name, 
+                        item.area, users, item.name, 
                         (item.changesPerWeek > 0 ? (5/item.changesPerWeek) : 365),
                         costoSem,
                         costoSem * 4.4,
-                        (costoSem * 4.4) * item.users
+                        (costoSem * 4.4) * users
                     ];
-                    row.getCell(3).numFmt = '0.0'; row.getCell(4).numFmt = '"$"#,##0'; row.getCell(5).numFmt = '"$"#,##0'; row.getCell(6).numFmt = '"$"#,##0';
+                    row.getCell(4).numFmt = '0.0'; row.getCell(5).numFmt = '"$"#,##0'; row.getCell(6).numFmt = '"$"#,##0'; row.getCell(7).numFmt = '"$"#,##0';
                     startRow++;
                 });
 
@@ -875,7 +913,7 @@
                     row.values = [
                         itemName,
                         globalPastConsumptionDict[itemName] || 0,
-                        { formula: `SUMIF(B20:B${endAreaRow}, A${startRow}, F20:F${endAreaRow})` }, 
+                        { formula: `SUMIF(C20:C${endAreaRow}, A${startRow}, F20:F${endAreaRow})` }, 
                         { formula: `B${startRow} - C${startRow}` }, 
                         { formula: `B${startRow} * ${precio}` }, 
                         { formula: `C${startRow} * ${precio}` }, 
@@ -887,7 +925,7 @@
                 });
 
                 ws.columns.forEach((col, idx) => {
-                    if (idx === 1) col.width = 30; else col.width = 18; 
+                    if (idx === 2 || idx === 1) col.width = 25; else col.width = 18; 
                 });
 
                 if (aiReportText) {
@@ -939,15 +977,18 @@
             let globalDemandPDF = {};
 
             const body1 = sortedData.map(item => {
-                const consumo = item.changesPerWeek * 4.4 * item.users;
-                const stockMin = item.changesPerWeek * 2 * item.users;
+                const areaObj = areasConfigData.find(a => a.name === item.area);
+                const users = areaObj ? areaObj.users : 1;
+
+                const consumo = item.changesPerWeek * 4.4 * users;
+                const stockMin = item.changesPerWeek * 2 * users;
                 const reqTotal = Math.ceil(consumo) + Math.ceil(stockMin);
                 
                 if (!globalDemandPDF[item.name]) globalDemandPDF[item.name] = { req: 0, metaAPU: 0, price: item.price };
                 globalDemandPDF[item.name].req += reqTotal;
                 globalDemandPDF[item.name].metaAPU += consumo;
 
-                return [ item.area, item.name, item.users, "$" + formatMoney(item.price), item.changesPerWeek, consumo.toFixed(1), Math.ceil(stockMin), reqTotal, "$" + formatMoney(reqTotal * item.price) ];
+                return [ item.area, item.name, users, "$" + formatMoney(item.price), item.changesPerWeek, consumo.toFixed(1), Math.ceil(stockMin), reqTotal, "$" + formatMoney(reqTotal * item.price) ];
             });
             doc.autoTable({
                 head: [['ÁREA', 'DESCRIPCIÓN', 'USU.', 'PRECIO', 'C/SEM', 'META', 'CRÍTICO 14D', 'REQ. TOTAL', 'PPTO ($)']],
@@ -978,10 +1019,13 @@
             doc.setFontSize(10); doc.setTextColor(30, 41, 59);
             doc.text("2. ANÁLISIS DE COSTO (SEMANAL Y MENSUAL)", 14, nextY);
             const body2 = sortedData.map(item => {
+                const areaObj = areasConfigData.find(a => a.name === item.area);
+                const users = areaObj ? areaObj.users : 1;
+
                 const diasVidaRealRef = item.changesPerWeek > 0 ? (5 / item.changesPerWeek) : 365;
                 const costoSemanaUnit = item.changesPerWeek * item.price;
                 const costoMesUnit = costoSemanaUnit * 4.4;
-                const gastoAreaMes = costoMesUnit * item.users;
+                const gastoAreaMes = costoMesUnit * users;
                 return [ item.area, item.name, diasVidaRealRef.toFixed(1), "$" + formatMoney(Math.round(costoSemanaUnit)), "$" + formatMoney(Math.round(costoMesUnit)), "$" + formatMoney(Math.round(gastoAreaMes)) ];
             });
             doc.autoTable({
