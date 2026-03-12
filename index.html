@@ -21,13 +21,11 @@
             color: #1e293b;
         }
         
-        /* Paleta Naranjo Institucional */
         .text-brand { color: #ea580c; } 
         .bg-brand { background-color: #ea580c; }
         .bg-brand-hover:hover { background-color: #c2410c; } 
         .border-brand { border-color: #ea580c; }
         
-        /* Inputs minimalistas invisibles hasta focus */
         .input-clean {
             background-color: transparent;
             border: 1px solid transparent;
@@ -58,14 +56,12 @@
         .btn-delete { opacity: 0; transition: opacity 0.2s; }
         tr:hover .btn-delete { opacity: 1; }
 
-        /* Estilos del Modal */
         #ai-modal { display: none; }
         #ai-modal.active { display: flex; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <!-- HEADER GLOBAL -->
     <header class="max-w-[1400px] mx-auto mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
             <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 uppercase">
@@ -76,27 +72,23 @@
             </p>
         </div>
         <div class="flex flex-wrap gap-3 w-full md:w-auto">
-            <!-- Botón Excel Normal -->
             <button onclick="exportExcel(false)" class="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
                 <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Excel Base
+                Excel Vertical
             </button>
-            <!-- Botón Excel + IA -->
             <button onclick="openAIModal()" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
                 <svg class="w-4 h-4 text-indigo-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                🤖 Análisis IA (Excel)
+                🤖 IA Consultor (Excel)
             </button>
-            <!-- Botón PDF -->
             <button onclick="exportPDF()" class="flex items-center justify-center gap-2 bg-brand bg-brand-hover text-white px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Generar PDF Ejecutivo
+                Generar PDF A4
             </button>
         </div>
     </header>
 
     <!-- MÓDULO 1: LOGÍSTICA DE COMPRAS -->
     <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-        <!-- KPIs -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 border-b border-slate-200">
             <div class="p-6">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Inversión a Comprar (Bruto)</p>
@@ -120,7 +112,6 @@
             </div>
         </div>
 
-        <!-- Gráficos Comparativos -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 border-b border-slate-200 bg-white">
             <div class="bg-white">
                 <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Comparativo Gasto por Área: Histórico vs Meta</h3>
@@ -132,7 +123,6 @@
             </div>
         </div>
 
-        <!-- TABLA 1 -->
         <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-white">
             <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-brand"></span> 1. Módulo Logístico y Compras
@@ -238,52 +228,88 @@
         Plataforma de Control Logístico y Financiero
     </footer>
 
-    <!-- MODAL PARA API KEY DE GEMINI -->
+    <!-- MODAL IA GEMINI -->
     <div id="ai-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 justify-center items-center">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                 </div>
-                <h3 class="text-xl font-black text-slate-800">Análisis con IA (Gemini)</h3>
+                <h3 class="text-xl font-black text-slate-800">Analista Senior (IA)</h3>
             </div>
             <p class="text-sm text-slate-500 mb-6">
-                Ingresa tu API Key de Google Gemini. La IA interpretará los datos actuales de logística, costos y desviaciones, y redactará un resumen ejecutivo que se adjuntará en tu Excel.
+                Ingresa tu API Key de Gemini. La IA realizará una ingeniería inversa de la data y te generará un reporte logístico avanzado dentro del Excel.
             </p>
-            <input type="password" id="gemini-api-key" placeholder="Pega tu API Key aquí..." class="w-full border border-slate-300 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition">
+            <input type="password" id="gemini-api-key" placeholder="API Key de Google Gemini..." class="w-full border border-slate-300 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition">
             
             <div id="ai-loading" class="hidden flex-col items-center justify-center mb-4 text-indigo-600">
                 <svg class="animate-spin h-6 w-6 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                <p class="text-xs font-bold animate-pulse">La IA está analizando los datos...</p>
+                <p class="text-xs font-bold animate-pulse">La IA está procesando la base de datos...</p>
             </div>
 
             <div class="flex gap-3 justify-end mt-2" id="ai-buttons">
                 <button onclick="closeAIModal()" class="px-5 py-2.5 rounded-lg text-slate-600 font-bold hover:bg-slate-100 transition text-sm">Cancelar</button>
                 <button onclick="processAIExport()" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition shadow-md text-sm flex items-center gap-2">
-                    Generar Excel con IA
+                    Analizar y Exportar
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. Estructura de Datos Base
-        let eppData = [
-            { id: 1, name: "Guante Nitrilo NBR", area: "Enfierradura", price: 1890, daysTheo: 20, daysReal: 12, users: 20, currentStock: 0, pastConsumption: 45 },
-            { id: 2, name: "Guante Cabritilla", area: "Carpintería", price: 1130, daysTheo: 15, daysReal: 7, users: 16, currentStock: 15, pastConsumption: 60 },
-            { id: 3, name: "Guante Multiflex", area: "Eléctricos", price: 385, daysTheo: 10, daysReal: 6, users: 8, currentStock: 5, pastConsumption: 35 },
-            { id: 4, name: "Guante Descarne", area: "Soldadores", price: 3230, daysTheo: 30, daysReal: 12, users: 5, currentStock: 2, pastConsumption: 12 },
-            { id: 5, name: "Guante Antivibración", area: "Soldadores", price: 4100, daysTheo: 45, daysReal: 25, users: 5, currentStock: 0, pastConsumption: 6 },
-            { id: 6, name: "Antiparras In/Out", area: "Toda la Planta", price: 1840, daysTheo: 30, daysReal: 15, users: 49, currentStock: 20, pastConsumption: 85 },
-            { id: 7, name: "Casco de Seguridad", area: "Toda la Planta", price: 1645, daysTheo: 365, daysReal: 365, users: 49, currentStock: 10, pastConsumption: 5 }
+        const areasConfig = [
+            { name: "Enfierradura", users: 11 },
+            { name: "Hormigón", users: 9 },
+            { name: "Carpintería", users: 7 },
+            { name: "Eléctricos", users: 6 },
+            { name: "Carguío", users: 2 },
+            { name: "Soldadores", users: 5 }
         ];
+
+        const eppBlueprints = [
+            { name: "Guante Cabritilla", price: 1130, daysTheo: 15, daysReal: 7, pastConsumption: 12 },
+            { name: "Guante Multiflex", price: 385, daysTheo: 10, daysReal: 6, pastConsumption: 8 },
+            { name: "Guante Soldador", price: 3230, daysTheo: 30, daysReal: 12, pastConsumption: 5 },
+            { name: "Guante Nitrilo", price: 1890, daysTheo: 20, daysReal: 12, pastConsumption: 15 },
+            { name: "Antiparras", price: 1840, daysTheo: 30, daysReal: 15, pastConsumption: 5 },
+            { name: "Rodillera", price: 8500, daysTheo: 60, daysReal: 30, pastConsumption: 1 },
+            { name: "Casco", price: 1645, daysTheo: 365, daysReal: 365, pastConsumption: 1 },
+            { name: "Botín Seguridad", price: 24500, daysTheo: 180, daysReal: 120, pastConsumption: 1 }
+        ];
+
+        let eppData = [];
+        let idCounter = 1;
+        areasConfig.forEach(area => {
+            eppBlueprints.forEach(epp => {
+                eppData.push({
+                    id: idCounter++,
+                    name: epp.name,
+                    area: area.name,
+                    price: epp.price,
+                    daysTheo: epp.daysTheo,
+                    daysReal: epp.daysReal,
+                    users: area.users,
+                    pastConsumption: epp.pastConsumption 
+                });
+            });
+        });
+
+        let globalStockDict = {
+            "Guante Cabritilla": 45,
+            "Guante Multiflex": 30,
+            "Guante Soldador": 15,
+            "Guante Nitrilo": 50,
+            "Antiparras": 30,
+            "Rodillera": 8,
+            "Casco": 12,
+            "Botín Seguridad": 5
+        };
 
         let areaChartInstance = null;
         let projChartInstance = null;
 
         function formatMoney(num) { return num.toLocaleString('es-CL'); }
 
-        // 2. Motor de Cálculo y Renderizado
         function calculateAndRender() {
             const tbody = document.getElementById('table-body');
             const hourlyTbody = document.getElementById('hourly-table-body');
@@ -295,11 +321,22 @@
             let alertasQuiebre = 0; let totalFugaMensual = 0;
             let totalGastoHistorico = 0; let totalGastoProyectadoMejora = 0;
             
-            const gastoTeoricoPorArea = {}; 
-            const gastoHistoricoPorArea = {};
-            const diasMes = 22; const diasBuffer = 7; const horasDia = 9;
+            // INICIALIZACIÓN CORRECTA DE OBJETOS
+            let gastoTeoricoPorArea = {}; 
+            let gastoHistoricoPorArea = {};
+
+            const diasMes = 22; const diasBuffer = 14; const horasDia = 9;
             const dataWithIndex = eppData.map((item, index) => ({ ...item, originalIndex: index }));
+            
             const uniqueAreas = [...new Set(dataWithIndex.map(item => item.area))].sort((a, b) => a === "Toda la Planta" ? 1 : b === "Toda la Planta" ? -1 : a.localeCompare(b));
+
+            let availableStock = { ...globalStockDict };
+            
+            let preciosUnicos = {};
+            eppData.forEach(item => preciosUnicos[item.name] = item.price);
+            for (let name in globalStockDict) {
+                totalCapitalBodega += (globalStockDict[name] * (preciosUnicos[name] || 0));
+            }
 
             uniqueAreas.forEach(area => {
                 // HEADERS
@@ -330,28 +367,35 @@
                     // Módulo 1 (Logística)
                     const consumo = (diasMes / item.daysReal) * item.users;
                     const stockMin = Math.ceil((diasBuffer / item.daysReal) * item.users);
-                    const objInventario = Math.ceil(consumo) + stockMin;
-                    const aComprar = Math.max(0, objInventario - item.currentStock);
+                    const necesidadTotal = Math.ceil(consumo) + stockMin;
+                    
+                    const stockDisponibleMomento = availableStock[item.name] || 0;
+                    const asignadoDeBodega = Math.min(necesidadTotal, stockDisponibleMomento);
+                    const aComprar = necesidadTotal - asignadoDeBodega;
+                    
+                    if (availableStock[item.name] !== undefined) {
+                        availableStock[item.name] -= asignadoDeBodega;
+                    }
+
                     const gastoRq = aComprar * item.price;
                     const gastoTeorico = consumo * item.price;
-                    const valorBodega = item.currentStock * item.price;
                     const gastoHistorico = item.pastConsumption * item.price;
 
                     totalComprarNeto += gastoRq; 
                     totalGastoTeorico += gastoTeorico; 
-                    totalCapitalBodega += valorBodega;
                     
-                    if(!gastoTeoricoPorArea[area]) gastoTeoricoPorArea[area] = 0; 
+                    if(gastoTeoricoPorArea[area] === undefined) gastoTeoricoPorArea[area] = 0; 
                     gastoTeoricoPorArea[area] += gastoTeorico;
 
-                    if(!gastoHistoricoPorArea[area]) gastoHistoricoPorArea[area] = 0;
+                    if(gastoHistoricoPorArea[area] === undefined) gastoHistoricoPorArea[area] = 0;
                     gastoHistoricoPorArea[area] += gastoHistorico;
 
-                    if (item.currentStock < stockMin) alertasQuiebre++;
+                    if (stockDisponibleMomento < stockMin && aComprar > 0) alertasQuiebre++;
 
-                    const stockInputClass = item.currentStock < stockMin ? 'input-clean input-warning' : 'input-clean font-bold text-slate-700';
                     const numColor = aComprar > 0 ? 'text-slate-800' : 'text-slate-400';
+                    eppData[item.originalIndex].calculatedComprar = aComprar; // Guardar para exportación
                     
+                    // RENDER TABLA 1 (NUEVO ORDEN LÓGICO)
                     const row = document.createElement('tr');
                     row.className = `transition-colors group bg-white hover:bg-slate-50`;
                     row.innerHTML = `
@@ -359,12 +403,18 @@
                         <td class="px-2 py-2"><input type="text" class="input-clean font-medium ${numColor}" value="${item.name}" onchange="updateData(${item.id}, 'name', this.value)"></td>
                         <td class="px-2 py-2"><input type="number" min="0" class="input-clean text-center text-slate-500" value="${item.users}" onchange="updateData(${item.id}, 'users', this.value)"></td>
                         <td class="px-2 py-2"><div class="flex items-center"><span class="text-slate-300 pl-2">$</span><input type="number" min="0" class="input-clean font-mono text-sm ${numColor}" value="${item.price}" onchange="updateData(${item.id}, 'price', this.value)"></div></td>
+                        
                         <td class="px-2 py-2"><input type="number" min="1" class="input-clean text-center font-mono text-sm text-slate-500" value="${item.daysReal}" onchange="updateData(${item.id}, 'daysReal', this.value)"></td>
                         <td class="px-3 py-2 text-center text-slate-500">${consumo.toFixed(1)}</td>
                         <td class="px-3 py-2 text-center text-slate-400">${stockMin}</td>
-                        <td class="px-4 py-2 bg-slate-50/50"><input type="number" min="0" class="text-center text-base ${stockInputClass}" value="${item.currentStock}" onchange="updateData(${item.id}, 'currentStock', this.value)"></td>
-                        <td class="px-4 py-2 text-center font-black text-lg ${aComprar > 0 ? 'text-brand' : 'text-slate-300'}">${aComprar}</td>
-                        <td class="px-5 py-2 text-right"><span class="font-bold text-base ${aComprar > 0 ? 'text-slate-800' : 'text-slate-300'}">$${formatMoney(Math.round(gastoRq))}</span></td>
+                        
+                        <td class="px-4 py-2 bg-slate-50/80 border-x border-slate-100">
+                            <input type="number" min="0" class="text-center text-base input-clean font-bold text-brand w-20 mx-auto block" value="${globalStockDict[item.name] || 0}" onchange="updateGlobalStock('${item.name}', this.value)">
+                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider text-center mt-1">Asigna: ${asignadoDeBodega}</div>
+                        </td>
+
+                        <td class="px-4 py-2 text-center font-black text-lg ${aComprar > 0 ? 'text-slate-700' : 'text-slate-300'}">${aComprar}</td>
+                        <td class="px-5 py-2 text-right"><span class="font-bold text-base ${aComprar > 0 ? 'text-brand' : 'text-slate-300'}">$${formatMoney(Math.round(gastoRq))}</span></td>
                     `;
                     tbody.appendChild(row);
 
@@ -389,14 +439,11 @@
                     hourlyTbody.appendChild(hrRow);
 
                     // Módulo 3 (Mejora Continua)
-                    const consumoProyectado = (diasMes / item.daysReal) * item.users;
-                    const gastoProyectado = consumoProyectado * item.price;
-                    
-                    totalGastoProyectadoMejora += gastoProyectado; 
+                    totalGastoProyectadoMejora += gastoTeorico; 
                     totalGastoHistorico += gastoHistorico;
 
-                    const difUnidades = item.pastConsumption - consumoProyectado;
-                    const impactoFinanciero = gastoHistorico - gastoProyectado;
+                    const difUnidades = item.pastConsumption - consumo;
+                    const impactoFinanciero = gastoHistorico - gastoTeorico;
                     const statusColor = impactoFinanciero > 0 ? 'text-red-500' : (impactoFinanciero < 0 ? 'text-emerald-500' : 'text-slate-400');
 
                     const impRow = document.createElement('tr');
@@ -404,10 +451,10 @@
                     impRow.innerHTML = `
                         <td class="px-6 py-3 font-medium text-slate-700">${item.name}</td>
                         <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="0" class="input-clean text-center font-bold text-slate-800" value="${item.pastConsumption}" onchange="updateData(${item.id}, 'pastConsumption', this.value)"></td>
-                        <td class="px-4 py-3 text-center font-mono text-slate-400">${consumoProyectado.toFixed(1)}</td>
+                        <td class="px-4 py-3 text-center font-mono text-slate-400">${consumo.toFixed(1)}</td>
                         <td class="px-4 py-3 text-center font-mono ${statusColor}">${difUnidades > 0 ? '+' : ''}${difUnidades.toFixed(1)}</td>
                         <td class="px-4 py-3 text-right font-mono text-slate-500">$${formatMoney(Math.round(gastoHistorico))}</td>
-                        <td class="px-4 py-3 text-right font-mono text-slate-400">$${formatMoney(Math.round(gastoProyectado))}</td>
+                        <td class="px-4 py-3 text-right font-mono text-slate-400">$${formatMoney(Math.round(gastoTeorico))}</td>
                         <td class="px-6 py-3 text-right"><span class="font-bold text-base ${statusColor}">${impactoFinanciero > 0 ? '+' : ''}$${formatMoney(Math.round(impactoFinanciero))}</span></td>
                     `;
                     improvementTbody.appendChild(impRow);
@@ -435,7 +482,7 @@
                 document.getElementById('kpi-alertas').className = "text-3xl font-black text-red-600";
                 document.getElementById('kpi-alertas').innerText = `${alertasQuiebre} Ítems`;
                 document.getElementById('alert-subtitle').className = "text-xs text-red-400 mt-2 font-medium";
-                document.getElementById('alert-subtitle').innerText = "Bajo stock mínimo";
+                document.getElementById('alert-subtitle').innerText = "No alcanza para el mes";
             } else {
                 document.getElementById('alert-title').className = "text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1";
                 document.getElementById('alert-title').innerText = "Estado Inventario";
@@ -448,12 +495,24 @@
             renderCharts(gastoTeoricoPorArea, gastoHistoricoPorArea, totalComprarNeto, totalGastoTeorico, totalGastoHistorico);
         }
 
+        function updateGlobalStock(itemName, value) {
+            const num = parseFloat(value);
+            if (!isNaN(num) && num >= 0) {
+                globalStockDict[itemName] = num;
+            }
+            calculateAndRender();
+        }
+
         function updateData(id, field, value) {
             const index = eppData.findIndex(item => item.id === id);
             if (index === -1) return;
 
             if (field === 'name') { 
+                const oldName = eppData[index].name;
                 eppData[index][field] = value; 
+                if (globalStockDict[value] === undefined) {
+                    globalStockDict[value] = globalStockDict[oldName] || 0;
+                }
             } 
             else { 
                 const num = parseFloat(value); 
@@ -467,17 +526,18 @@
             eppData.forEach(item => { if (item.area === oldArea) item.area = newArea.trim(); });
             calculateAndRender();
         }
-        
         function addNewArea() { 
-            eppData.push({ id: Date.now(), name: "Nuevo EPP", area: "NUEVA ÁREA", price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); 
+            const newName = "Nuevo EPP";
+            if (globalStockDict[newName] === undefined) globalStockDict[newName] = 0;
+            eppData.push({ id: Date.now(), name: newName, area: "NUEVA ÁREA", price: 0, daysTheo: 30, daysReal: 30, users: 1, pastConsumption: 0 }); 
             calculateAndRender(); 
         }
-        
         function addNewEPP(areaName) { 
-            eppData.push({ id: Date.now(), name: "Nuevo Insumo", area: areaName, price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); 
+            const newName = "Nuevo Insumo";
+            if (globalStockDict[newName] === undefined) globalStockDict[newName] = 0;
+            eppData.push({ id: Date.now(), name: newName, area: areaName, price: 0, daysTheo: 30, daysReal: 30, users: 1, pastConsumption: 0 }); 
             calculateAndRender(); 
         }
-        
         function deleteEPP(id) { 
             if(confirm("¿Seguro que deseas eliminar este ítem?")) { 
                 eppData = eppData.filter(item => item.id !== id); 
@@ -496,7 +556,7 @@
                 data: { 
                     labels: labelsArea, 
                     datasets: [
-                        { label: 'Gasto Histórico (Mes Ant.)', data: dataHistorico, backgroundColor: '#94a3b8', borderRadius: 4 },
+                        { label: 'Histórico (Mes Ant.)', data: dataHistorico, backgroundColor: '#94a3b8', borderRadius: 4 },
                         { label: 'Meta APU Proyectada', data: dataTeorico, backgroundColor: '#ea580c', borderRadius: 4 }
                     ] 
                 },
@@ -510,9 +570,9 @@
             projChartInstance = new Chart(document.getElementById('projectionChart').getContext('2d'), {
                 type: 'line', 
                 data: { 
-                    labels: ['Mes Ant. (Real)', 'Mes 1 (Inv. Actual)', 'Mes 2 (Meta)', 'Mes 3', 'Mes 4', 'Mes 5'], 
+                    labels: ['Mes Ant.', 'Mes 1 (Inv.)', 'Mes 2 (Meta)', 'Mes 3', 'Mes 4', 'Mes 5'], 
                     datasets: [{ 
-                        label: 'Inversión Proyectada ($)', 
+                        label: 'Inversión ($)', 
                         data: [gastoHistorico, gastoMes1, gastoTeorico, gastoTeorico, gastoTeorico, gastoTeorico], 
                         borderColor: '#64748b', backgroundColor: 'rgba(100, 116, 139, 0.1)', borderWidth: 2, 
                         pointBackgroundColor: ['#ef4444', '#ea580c', '#1e293b', '#1e293b', '#1e293b', '#1e293b'], 
@@ -524,7 +584,7 @@
         }
 
         // ==========================================
-        // INTEGRACIÓN CON GEMINI AI
+        // INTEGRACIÓN CON GEMINI AI (PROMPT ADAPTADO)
         // ==========================================
         function openAIModal() {
             document.getElementById('ai-modal').classList.add('active');
@@ -546,26 +606,25 @@
             document.getElementById('ai-loading').classList.add('flex');
 
             try {
-                const kpiBruto = document.getElementById('kpi-total-bruto').textContent;
-                const kpiFuga = document.getElementById('kpi-fuga-capital').textContent;
-                const kpiDesv = document.getElementById('kpi-desviacion').textContent;
-                
+                // Tomamos la esencia de tu prompt experto y la adaptamos a los datos JSON de la app
                 const promptText = `
-                Actúa como un experto en logística y control de costos para una empresa constructora e industrial.
-                A continuación te proporciono los datos actuales del inventario y consumo de Elementos de Protección Personal (EPP):
+                Actúa como un Analista Senior de Datos, Experto en Logística, Adquisiciones (Chile) y Diseño de Dashboards.
+                En lugar de darte una imagen, te proporciono a continuación la base de datos cruda del consumo de EPP actual de nuestra planta.
                 
-                DATOS DE ITEMS:
-                ${JSON.stringify(eppData.map(e => ({Item: e.name, Area: e.area, Precio: e.price, VidaRealDias: e.daysReal, VidaFichaDias: e.daysTheo, Stock: e.currentStock, ConsumoPasado: e.pastConsumption})))}
+                DATOS JSON:
+                ${JSON.stringify(eppData.map(e => ({Item: e.name, Area: e.area, Precio: e.price, VidaReal: e.daysReal, VidaFicha: e.daysTheo, StockGlobal: globalStockDict[e.name], ConsumoPasado: e.pastConsumption})))}
 
-                DATOS GLOBALES DEL MES:
-                - Inversión a Comprar Requerida: ${kpiBruto}
-                - Fuga de Capital Mensual (Costo por no cumplir vida teórica): ${kpiFuga}
-                - Desviación Histórica vs Meta: ${kpiDesv}
-
-                Por favor, redacta un "Resumen Ejecutivo de Análisis Logístico" de máximo 3 párrafos en formato texto limpio (sin markdown ni asteriscos). 
-                1. Analiza dónde está el mayor riesgo de gasto.
-                2. Comenta sobre la fuga de capital generada por el desgaste prematuro.
-                3. Entrega una recomendación operativa clave para reducir costos.
+                Tu objetivo es hacer ingeniería inversa de estos números y entregarme un reporte ejecutivo para adjuntar en mi Excel.
+                Estructura tu respuesta en los siguientes 3 pasos, sin usar formato markdown de código (solo texto limpio):
+                
+                1. Extracción y Lógica Inversa:
+                Analiza los datos. Deduce qué insumo genera la mayor fuga de capital (por la brecha entre Vida Real y Vida de Ficha) y qué área está sobre-consumiendo según su histórico.
+                
+                2. Fórmulas de Automatización (El Motor):
+                Sugiéreme 2 fórmulas robustas de Excel (ej: =BUSCARX, =SI.ERROR) que me servirían para seguir automatizando esta tabla en el futuro. Explica brevemente qué hace la fórmula.
+                
+                3. Diseño y Visualización (UI/UX en Excel):
+                Dame 3 instrucciones de formato rápido para que mi Excel se vea como el de un consultor (ej: colores, reglas de formato condicional).
                 `;
 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -592,92 +651,108 @@
         }
 
         // ==========================================
-        // EXPORTACIÓN A EXCEL (Dashboard Resumen con Gráficos y IA)
+        // EXPORTACIÓN A EXCEL (Diseño Vertical Tipo Dashboard)
         // ==========================================
         async function exportExcel(aiReportText = false) {
             try {
                 const wb = new ExcelJS.Workbook();
-                const ws = wb.addWorksheet('Dashboard Visual');
+                const ws = wb.addWorksheet('Dashboard Vertical');
 
+                // 1. Estilos y Encabezados Superiores
+                ws.getCell('A1').value = 'REPORTE LOGÍSTICO Y CONTROL DE APU - DETECO';
+                ws.getCell('A1').font = { bold: true, size: 16, color: { argb: 'FF1E293B' } };
+                ws.getCell('A2').value = `Fecha de exportación: ${new Date().toLocaleDateString('es-CL')}`;
+                ws.getCell('A2').font = { color: { argb: 'FF64748B' } };
+
+                // 2. Insertar Gráficos Verticalmente
                 const canvasArea = document.getElementById('areaChart');
                 const canvasProj = document.getElementById('projectionChart');
                 
                 const imgAreaId = wb.addImage({ base64: canvasArea.toDataURL('image/png'), extension: 'png' });
                 const imgProjId = wb.addImage({ base64: canvasProj.toDataURL('image/png'), extension: 'png' });
 
-                ws.addImage(imgAreaId, { tl: { col: 1, row: 1 }, br: { col: 6, row: 14 } });
-                ws.addImage(imgProjId, { tl: { col: 7, row: 1 }, br: { col: 12, row: 14 } });
+                // Gráficos apilados uno debajo del otro (Bloque vertical)
+                ws.addImage(imgAreaId, { tl: { col: 0, row: 3 }, br: { col: 5, row: 15 } });
+                ws.addImage(imgProjId, { tl: { col: 6, row: 3 }, br: { col: 11, row: 15 } });
 
-                const headerRow = ws.getRow(16);
-                headerRow.values = [
-                    'ÁREA / CARGO', 'DESCRIPCIÓN EPP', 'USUARIOS', 'PRECIO NETO ($)', 
-                    'VIDA ÚTIL (SUGERIDA)', 'META MES APU', 'STOCK CRÍTICO (14D)', 'STOCK BODEGA',
-                    'A COMPRAR (UNID)', 'INVERSIÓN REQUERIDA ($)',
-                    'COSTO/HR TEÓRICO ($)', 'COSTO/HR REAL ($)', 'FUGA APU MES ($)',
-                    'CONS. MES ANTERIOR', 'DESVIACIÓN (UNID)'
-                ];
+                // 3. TABLA 1: LOGÍSTICA (Fila 17)
+                let startRow = 17;
+                ws.getCell(`A${startRow}`).value = '1. MÓDULO LOGÍSTICO Y COMPRAS';
+                ws.getCell(`A${startRow}`).font = { bold: true, size: 12, color: { argb: 'FFEA580C' } };
                 
-                headerRow.eachCell((cell) => {
-                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEA580C' } };
+                startRow++;
+                const headerRow1 = ws.getRow(startRow);
+                headerRow1.values = [
+                    'ÁREA', 'DESCRIPCIÓN', 'USUARIOS', 'PRECIO NETO ($)', 
+                    'VIDA ÚTIL SUGERIDA', 'META MES APU', 'STOCK CRÍTICO (14D)', 'STOCK GLOBAL',
+                    'A COMPRAR', 'INVERSIÓN REQ. ($)'
+                ];
+                headerRow1.eachCell((cell) => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
                     cell.font = { color: { argb: 'FFFFFFFF' }, bold: true };
-                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
-                    cell.border = { top: {style:'thin'}, bottom: {style:'thin'}, left: {style:'thin'}, right: {style:'thin'} };
                 });
-                headerRow.height = 25;
-
+                
+                startRow++;
                 const sortedData = [...eppData].sort((a, b) => a.area.localeCompare(b.area));
-                let startDataRow = 17;
-
+                
                 sortedData.forEach((item) => {
-                    const r = startDataRow;
-                    const row = ws.getRow(r);
-                    
-                    row.getCell(1).value = item.area;
-                    row.getCell(2).value = item.name;
-                    row.getCell(3).value = item.users;
-                    row.getCell(4).value = item.price;
-                    row.getCell(5).value = item.daysReal;
-                    
-                    row.getCell(6).value = { formula: `(22/E${r})*C${r}` }; // Meta Mes APU
-                    row.getCell(7).value = { formula: `(7/E${r})*C${r}` }; // Stock Crítico 14D
-                    row.getCell(8).value = item.currentStock; // Stock Actual
-                    row.getCell(9).value = { formula: `MAX(0, CEILING(F${r}, 1) + CEILING(G${r}, 1) - H${r})` }; // A Comprar
-                    
-                    row.getCell(10).value = { formula: `I${r}*D${r}` }; // Inv Req
-                    
-                    const vidaFicha = item.daysTheo;
-                    row.getCell(11).value = item.price / (vidaFicha * 9); // Costo Hr Teo (Estatico)
-                    row.getCell(12).value = { formula: `D${r}/(E${r}*9)` }; // Costo Hr Real
-                    
-                    row.getCell(13).value = (((22/item.daysReal)*item.users*item.price) - ((22/vidaFicha)*item.users*item.price)); // Fuga estatica
-                    
-                    row.getCell(14).value = item.pastConsumption; 
-                    row.getCell(15).value = { formula: `N${r}-F${r}` }; // Desviacion
-
-                    row.getCell(4).numFmt = '"$"#,##0';
-                    row.getCell(10).numFmt = '"$"#,##0';
-                    row.getCell(11).numFmt = '"$"#,##0.0';
-                    row.getCell(12).numFmt = '"$"#,##0.0';
-                    row.getCell(13).numFmt = '"$"#,##0';
-
+                    const row = ws.getRow(startRow);
+                    row.values = [
+                        item.area, item.name, item.users, item.price, item.daysReal,
+                        { formula: `(22/E${startRow})*C${startRow}` }, // Meta Mes
+                        { formula: `(14/E${startRow})*C${startRow}` }, // Crítico 14D
+                        globalStockDict[item.name] || 0, // Stock Global
+                        item.calculatedComprar, // A Comprar JS
+                        { formula: `I${startRow}*D${startRow}` } // Inversion
+                    ];
+                    row.getCell(4).numFmt = '"$"#,##0'; row.getCell(10).numFmt = '"$"#,##0';
                     row.getCell(9).font = { color: { argb: 'FFEA580C' }, bold: true };
-                    startDataRow++;
+                    startRow++;
                 });
 
+                // 4. TABLA 2: COSTO HORA (Fila Start + 2)
+                startRow += 2;
+                ws.getCell(`A${startRow}`).value = '2. ANÁLISIS DE COSTO POR HORA (APU)';
+                ws.getCell(`A${startRow}`).font = { bold: true, size: 12, color: { argb: 'FFEA580C' } };
+                
+                startRow++;
+                const headerRow2 = ws.getRow(startRow);
+                headerRow2.values = ['ÁREA', 'DESCRIPCIÓN', 'DÍAS FICHA', 'DÍAS REAL', 'COSTO/HR TEO', 'COSTO/HR REAL', 'FUGA MES ($)'];
+                headerRow2.eachCell((cell) => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+                    cell.font = { color: { argb: 'FFFFFFFF' }, bold: true };
+                });
+
+                startRow++;
+                sortedData.forEach((item, idx) => {
+                    const row = ws.getRow(startRow);
+                    const r1 = startRow - idx - 4 - sortedData.length; // Referencia a la tabla 1 para precios
+                    
+                    row.values = [
+                        item.area, item.name, item.daysTheo, item.daysReal,
+                        { formula: `D${r1}/(C${startRow}*9)` }, // Teo hr
+                        { formula: `D${r1}/(D${startRow}*9)` }, // Real hr
+                        { formula: `((22/D${startRow})*C${r1}*D${r1}) - ((22/C${startRow})*C${r1}*D${r1})` } // Fuga
+                    ];
+                    row.getCell(5).numFmt = '"$"#,##0.0'; row.getCell(6).numFmt = '"$"#,##0.0'; row.getCell(7).numFmt = '"$"#,##0';
+                    row.getCell(7).font = { color: { argb: 'FFEF4444' } }; // Rojo fuga
+                    startRow++;
+                });
+
+                // Anchos de columna
                 ws.columns.forEach((col, idx) => {
-                    if (idx === 1) col.width = 35; 
-                    else if (idx === 0) col.width = 20; 
-                    else col.width = 18; 
+                    if (idx === 1) col.width = 30; else col.width = 16; 
                 });
 
+                // Si hay reporte de IA
                 if (aiReportText) {
-                    const ai_ws = wb.addWorksheet('Análisis Estratégico IA');
-                    ai_ws.getCell('A1').value = 'ANÁLISIS EJECUTIVO - GENERADO POR GOOGLE GEMINI AI';
+                    const ai_ws = wb.addWorksheet('Análisis Consultor IA');
+                    ai_ws.getCell('A1').value = 'ANÁLISIS LOGÍSTICO INVERSO - GOOGLE GEMINI';
                     ai_ws.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FFEA580C' } };
                     ai_ws.getCell('A3').value = aiReportText;
                     ai_ws.getCell('A3').alignment = { wrapText: true, vertical: 'top' };
                     ai_ws.getColumn(1).width = 120;
-                    ai_ws.getRow(3).height = 200;
+                    ai_ws.getRow(3).height = 300;
                 }
 
                 const buffer = await wb.xlsx.writeBuffer();
@@ -685,13 +760,13 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'Dashboard_Logistico_General.xlsx';
+                a.download = 'Reporte_Vertical_Deteco.xlsx';
                 a.click();
                 window.URL.revokeObjectURL(url);
 
             } catch (err) {
                 console.error(err);
-                alert("Hubo un error generando el Excel Visual.");
+                alert("Hubo un error generando el Excel.");
             }
         }
 
@@ -720,12 +795,11 @@
             doc.text("1. LOGÍSTICA DE COMPRAS (ORDEN)", 14, 28);
             const body1 = sortedData.map(item => {
                 const consumo = (22 / item.daysReal) * item.users;
-                const stockMin = Math.ceil((7 / item.daysReal) * item.users);
-                const aComprar = Math.max(0, Math.ceil(consumo) + stockMin - item.currentStock);
-                return [ item.area, item.name, item.users, "$" + formatMoney(item.price), item.daysReal, consumo.toFixed(1), stockMin, item.currentStock, aComprar, "$" + formatMoney(aComprar * item.price) ];
+                const stockMin = Math.ceil((14 / item.daysReal) * item.users); // Ahora 14 días
+                return [ item.area, item.name, item.users, "$" + formatMoney(item.price), item.daysReal, consumo.toFixed(1), stockMin, globalStockDict[item.name] || 0, item.calculatedComprar, "$" + formatMoney(item.calculatedComprar * item.price) ];
             });
             doc.autoTable({
-                head: [['ÁREA', 'DESCRIPCIÓN', 'USU.', 'PRECIO', 'VIDA', 'META', 'STK. CRÍTICO', 'STOCK', 'A COMPRAR', 'TOTAL ($)']],
+                head: [['ÁREA', 'DESCRIPCIÓN', 'USU.', 'PRECIO', 'VIDA (SUG)', 'META', 'CRÍTICO 14D', 'STOCK GL.', 'A COMPRAR', 'TOTAL ($)']],
                 body: body1, startY: 31, theme: 'grid', styles: generalStyles, headStyles: headStylesColor,
                 columnStyles: { 0: { fontStyle: 'bold' }, 8: { fontStyle: 'bold', textColor: brandColor }, 9: { halign: 'right' } }
             });
