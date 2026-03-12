@@ -3,443 +3,675 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deteco IC SA - Gestión Predictiva EPP</title>
+    <title>Sistema de Planificación Logística y APU</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
+    
+    <!-- LIBRERÍAS AVANZADAS PARA EXCEL VISUAL Y PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
         
-        /* Estilos para las filas de grupo (Áreas) */
-        .area-header { background-color: #f1f5f9; border-top: 2px solid #e2e8f0; }
+        /* Paleta Naranjo Institucional */
+        .text-brand { color: #ea580c; } 
+        .bg-brand { background-color: #ea580c; }
+        .bg-brand-hover:hover { background-color: #c2410c; } 
+        .border-brand { border-color: #ea580c; }
+        
+        /* Inputs minimalistas invisibles hasta focus */
+        .input-clean {
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            width: 100%;
+            transition: all 0.2s ease;
+            padding: 4px 6px;
+        }
+        .input-clean:hover { background-color: #f1f5f9; }
+        .input-clean:focus {
+            background-color: #ffffff;
+            border-color: #ea580c;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+        }
+        
+        .input-warning { color: #ef4444; font-weight: 700; }
+        .input-warning:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .table-container::-webkit-scrollbar { height: 6px; }
+        .table-container::-webkit-scrollbar-track { background: transparent; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .btn-delete { opacity: 0; transition: opacity 0.2s; }
+        tr:hover .btn-delete { opacity: 1; }
+
+        /* Estilos del Modal */
+        #ai-modal { display: none; }
+        #ai-modal.active { display: flex; }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="p-4 md:p-8">
 
-    <!-- HEADER -->
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center">
-            <div class="mb-4 sm:mb-0">
-                <h1 class="text-2xl font-bold tracking-tight text-blue-400">DETECO <span class="text-white font-light">IC SA</span></h1>
-                <p class="text-xs text-slate-400 uppercase tracking-widest mt-1">Logística & Adquisiciones • Control de EPP</p>
-                <p class="text-xs text-slate-500 mt-1">Encargado: Iván Vivanco (Base Lampa)</p>
-            </div>
-            <div class="text-right bg-slate-800 px-4 py-2 rounded-lg border border-slate-700">
-                <span class="text-xs text-slate-400 uppercase block">Dotación Activa</span>
-                <span class="text-2xl font-bold text-emerald-400">49 <span class="text-sm font-normal text-slate-300">Trabajadores</span></span>
-            </div>
+    <!-- HEADER GLOBAL -->
+    <header class="max-w-[1400px] mx-auto mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 uppercase">
+                Sistema de Gestión <span class="text-brand">Logística</span>
+            </h1>
+            <p class="text-slate-500 font-medium mt-1 text-sm tracking-wide">
+                CONTROL INTEGRADO DE PRESUPUESTOS, COMPRAS Y STOCK
+            </p>
+        </div>
+        <div class="flex flex-wrap gap-3 w-full md:w-auto">
+            <!-- Botón Excel Normal -->
+            <button onclick="exportExcel(false)" class="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Excel Base
+            </button>
+            <!-- Botón Excel + IA -->
+            <button onclick="openAIModal()" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
+                <svg class="w-4 h-4 text-indigo-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                🤖 Análisis IA (Excel)
+            </button>
+            <!-- Botón PDF -->
+            <button onclick="exportPDF()" class="flex items-center justify-center gap-2 bg-brand bg-brand-hover text-white px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Generar PDF Ejecutivo
+            </button>
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        
-        <!-- NUEVA SECCIÓN: COMPARATIVO ESTRATÉGICO -->
-        <div class="mb-8">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                Impacto Gerencial: Modelo Histórico vs. Nuevo Orden
+    <!-- MÓDULO 1: LOGÍSTICA DE COMPRAS -->
+    <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 border-b border-slate-200">
+            <div class="p-6">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Inversión a Comprar (Bruto)</p>
+                <h2 id="kpi-total-bruto" class="text-3xl font-black text-slate-900">$0</h2>
+                <p class="text-xs text-slate-400 mt-2">Gasto con IVA (19%)</p>
+            </div>
+            <div class="p-6">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total a Comprar (Neto)</p>
+                <h2 id="kpi-total-neto" class="text-3xl font-black text-slate-800">$0</h2>
+                <p class="text-xs text-slate-500 mt-2 font-medium" id="kpi-ahorro-stock">Ahorro por Stock: $0</p>
+            </div>
+            <div class="p-6">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Capital en Bodega</p>
+                <h2 id="kpi-capital-bodega" class="text-3xl font-black text-slate-700">$0</h2>
+                <p class="text-xs text-slate-400 mt-2">Valoración del inventario actual</p>
+            </div>
+            <div class="p-6" id="alert-container">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1" id="alert-title">Estado de Inventario</p>
+                <h2 id="kpi-alertas" class="text-3xl font-black text-slate-800">Óptimo</h2>
+                <p class="text-xs text-slate-400 mt-2" id="alert-subtitle">Cobertura asegurada</p>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 border-b border-slate-200 bg-white">
+            <div class="bg-white">
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Distribución de Gasto por Área</h3>
+                <!-- Es importante el fondo blanco puro para que al exportar a Excel el gráfico no tenga fondo negro -->
+                <div class="relative w-full h-48 bg-white"><canvas id="areaChart" style="background-color: white;"></canvas></div>
+            </div>
+            <div class="bg-white">
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Proyección de Inversión (6 Meses)</h3>
+                <div class="relative w-full h-48 bg-white"><canvas id="projectionChart" style="background-color: white;"></canvas></div>
+            </div>
+        </div>
+
+        <!-- TABLA 1 -->
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-white">
+            <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-brand"></span> 1. Módulo Logístico y Compras
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Modelo Anterior -->
-                <div class="glass-panel p-5 rounded-xl border border-slate-200 opacity-80 bg-slate-50">
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Mes Anterior (Sin Control)</p>
-                    <h2 id="comp-anterior" class="text-2xl font-bold text-slate-700 mt-2">$0</h2>
-                    <ul class="text-xs text-slate-500 mt-3 space-y-1">
-                        <li>⚠️ Compras reactivas (quiebre de stock)</li>
-                        <li>⚠️ Sobreprecio por urgencias (+35% est.)</li>
-                        <li>⚠️ Asignación no parametrizada</li>
-                    </ul>
-                </div>
-                
-                <!-- Nuevo Modelo -->
-                <div class="glass-panel p-5 rounded-xl border border-blue-200 bg-blue-50 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 w-16 h-16 bg-blue-100 rounded-bl-full -z-10"></div>
-                    <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide">Nuevo Orden (Actual)</p>
-                    <h2 id="comp-actual" class="text-3xl font-black text-blue-800 mt-2">$0</h2>
-                    <ul class="text-xs text-blue-600 mt-3 space-y-1 font-medium">
-                        <li>✅ Regla estricta: 7 Días de Seguridad</li>
-                        <li>✅ Compras planificadas APU</li>
-                        <li>✅ Control por Área/Especialidad</li>
-                    </ul>
-                </div>
-
-                <!-- Ahorro -->
-                <div class="glass-panel p-5 rounded-xl border border-emerald-200 bg-emerald-50 relative overflow-hidden">
-                    <div class="absolute right-0 bottom-0 opacity-10"><svg class="w-24 h-24 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path></svg></div>
-                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide relative z-10">Ahorro Mensual Proyectado</p>
-                    <h2 id="comp-ahorro" class="text-3xl font-black text-emerald-700 mt-2 relative z-10">$0</h2>
-                    <p class="text-xs text-emerald-600 mt-2 relative z-10 bg-white/60 inline-block px-2 py-1 rounded font-bold">Optimización directa a la rentabilidad</p>
-                </div>
-            </div>
         </div>
-
-        <!-- SECCIÓN 2: KPIs OPERATIVOS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="glass-panel p-4 rounded-xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Total a Comprar (Mes)</p>
-                <h2 id="kpi-unidades" class="text-2xl font-bold text-slate-800 mt-1">0 Unidades</h2>
-            </div>
-            <div class="glass-panel p-4 rounded-xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Costo Promedio Diario</p>
-                <h2 id="kpi-apu" class="text-2xl font-bold text-slate-800 mt-1">$0 <span class="text-sm font-normal text-slate-500">/ trab / día</span></h2>
-            </div>
-            <div class="glass-panel p-4 rounded-xl shadow-sm border-l-4 border-l-orange-500 bg-orange-50/50">
-                <div class="flex justify-between items-start">
-                    <p class="text-xs font-semibold text-orange-700 uppercase tracking-wide">Alerta de Quiebre</p>
-                </div>
-                <h2 id="kpi-stock" class="text-2xl font-bold text-orange-800 mt-1">0 Ítems</h2>
-            </div>
+        <div class="table-container overflow-x-auto">
+            <table class="w-full text-left border-collapse whitespace-nowrap" id="apu-table">
+                <thead>
+                    <tr class="border-b-2 border-slate-200 bg-white text-slate-400 text-[10px] uppercase tracking-wider font-bold">
+                        <th class="px-4 py-3 w-10 text-center"></th>
+                        <th class="px-2 py-3 w-[280px]">Descripción (EPP)</th>
+                        <th class="px-2 py-3 text-center">Usuarios</th>
+                        <th class="px-2 py-3">Precio Neto</th>
+                        <th class="px-4 py-3 text-center text-slate-600">Stock Actual</th>
+                        <th class="px-2 py-3 text-center">Vida Útil</th>
+                        <th class="px-3 py-3 text-center">Meta Mes</th>
+                        <th class="px-3 py-3 text-center">Reserva</th>
+                        <th class="px-4 py-3 text-center text-brand">A Comprar</th>
+                        <th class="px-5 py-3 text-right text-slate-600">Costo Total ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
         </div>
-
-        <!-- SECCIÓN 3: GRÁFICO Y TABLA AGRUPADA -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Panel Lateral: Gráfico por Áreas -->
-            <div class="lg:col-span-1 glass-panel p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                <h3 class="font-semibold text-slate-800 mb-4 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                    Distribución de Gasto por Área
-                </h3>
-                <div class="flex-grow flex items-center justify-center relative min-h-[250px]">
-                    <canvas id="gastoChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Panel Principal: Matriz Interactiva -->
-            <div class="lg:col-span-2 glass-panel rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                <div class="p-5 bg-white border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h3 class="font-semibold text-slate-800 text-lg">Matriz Operativa por Áreas</h3>
-                        <p class="text-sm text-slate-500">Agrupa automáticamente los ítems según el texto de su área.</p>
-                    </div>
-                    <!-- BOTÓN AGREGAR ÍTEM -->
-                    <button onclick="agregarItem()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm flex items-center flex-shrink-0">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Agregar Insumo
-                    </button>
-                </div>
-                
-                <div class="overflow-x-auto flex-grow">
-                    <table class="w-full text-left border-collapse min-w-[800px]">
-                        <thead class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider">
-                            <tr>
-                                <th class="px-5 py-3 font-medium w-64">Nombre EPP</th>
-                                <th class="px-3 py-3 font-medium text-center w-20">Usuarios</th>
-                                <th class="px-4 py-3 font-medium w-28 text-center">Precio</th>
-                                <th class="px-4 py-3 font-medium w-24 text-center">Vida Útil</th>
-                                <th class="px-4 py-3 font-medium w-24 text-center">Stock</th>
-                                <th class="px-4 py-3 font-medium text-center bg-blue-50/50">Mes (Unid.)</th>
-                                <th class="px-4 py-3 font-medium text-center bg-orange-50/50">Mín. (7D)</th>
-                                <th class="px-4 py-3 font-medium text-center w-10"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-body" class="text-sm bg-white">
-                            <!-- Filas generadas por JS dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- FOOTER / ACCIONES -->
-        <div class="mt-8 flex justify-end gap-4">
-            <button onclick="exportarSimulacion()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Exportar Reporte
+        <div class="p-4 border-t border-slate-200 flex justify-center bg-white">
+            <button onclick="addNewArea()" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 px-4 py-2 rounded font-bold transition text-xs uppercase tracking-widest">
+                + Crear Nueva Área de Trabajo
             </button>
         </div>
-    </main>
+    </div>
+
+    <!-- MÓDULO 2: ANÁLISIS PRECIO / HORA -->
+    <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+        <header class="border-b border-slate-200 px-6 py-5 flex justify-between items-center bg-white">
+            <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-slate-800"></span> 2. Análisis de Costo por Hora y Desgaste
+            </h2>
+            <div class="text-right flex items-center gap-4">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fuga de Capital Teórica</p>
+                <h3 id="kpi-fuga-capital" class="text-xl font-black text-slate-800">-$0</h3>
+            </div>
+        </header>
+        <div class="table-container overflow-x-auto">
+            <table class="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                    <tr class="border-b-2 border-slate-200 bg-white text-slate-400 text-[10px] uppercase tracking-wider font-bold">
+                        <th class="px-6 py-3">Ítem (Solo Lectura)</th>
+                        <th class="px-4 py-3 text-center text-slate-600" title="Editable: Vida útil según fabricante">Vida Ficha (Días)</th>
+                        <th class="px-4 py-3 text-center">Vida Real</th>
+                        <th class="px-4 py-3 text-center">Costo/Hr Teórico</th>
+                        <th class="px-4 py-3 text-center">Costo/Hr Real</th>
+                        <th class="px-4 py-3 text-center">Brecha/Hora</th>
+                        <th class="px-6 py-3 text-right text-slate-600">Impacto Mensual ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="hourly-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MÓDULO 3: MEJORA CONTINUA -->
+    <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+        <header class="border-b border-slate-200 px-6 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white">
+            <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span> 3. Análisis de Mejora Continua
+            </h2>
+            <div class="flex gap-6 text-right items-center">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Histórico</p>
+                    <h3 id="kpi-historico" class="text-lg font-black text-slate-600">$0</h3>
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Meta APU</p>
+                    <h3 id="kpi-proyectado-mejora" class="text-lg font-black text-slate-600">$0</h3>
+                </div>
+                <div class="pl-6 border-l border-slate-200">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Desviación Financiera</p>
+                    <h3 id="kpi-desviacion" class="text-xl font-black text-slate-900">$0</h3>
+                </div>
+            </div>
+        </header>
+        <div class="table-container overflow-x-auto">
+            <table class="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                    <tr class="border-b-2 border-slate-200 bg-white text-slate-400 text-[10px] uppercase tracking-wider font-bold">
+                        <th class="px-6 py-3">Descripción (EPP)</th>
+                        <th class="px-4 py-3 text-center text-slate-600">Consumo Histórico</th>
+                        <th class="px-4 py-3 text-center">Meta APU</th>
+                        <th class="px-4 py-3 text-center">Desv. (Unid)</th>
+                        <th class="px-4 py-3 text-right">Gasto Hist.</th>
+                        <th class="px-4 py-3 text-right">Gasto Meta</th>
+                        <th class="px-6 py-3 text-right text-slate-600">Impacto ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="improvement-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="max-w-[1400px] mx-auto text-center p-6 text-xs text-slate-400 mb-8 uppercase tracking-widest font-semibold">
+        Plataforma de Control Logístico y Financiero
+    </footer>
+
+    <!-- MODAL PARA API KEY DE GEMINI -->
+    <div id="ai-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 justify-center items-center">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                </div>
+                <h3 class="text-xl font-black text-slate-800">Análisis con IA (Gemini)</h3>
+            </div>
+            <p class="text-sm text-slate-500 mb-6">
+                Ingresa tu API Key de Google Gemini. La IA interpretará los datos actuales de logística, costos y desviaciones, y redactará un resumen ejecutivo que se adjuntará en tu Excel.
+            </p>
+            <input type="password" id="gemini-api-key" placeholder="Pega tu API Key aquí..." class="w-full border border-slate-300 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition">
+            
+            <!-- Loading indicator -->
+            <div id="ai-loading" class="hidden flex-col items-center justify-center mb-4 text-indigo-600">
+                <svg class="animate-spin h-6 w-6 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-xs font-bold animate-pulse">La IA está analizando los datos...</p>
+            </div>
+
+            <div class="flex gap-3 justify-end mt-2" id="ai-buttons">
+                <button onclick="closeAIModal()" class="px-5 py-2.5 rounded-lg text-slate-600 font-bold hover:bg-slate-100 transition text-sm">Cancelar</button>
+                <button onclick="processAIExport()" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition shadow-md text-sm flex items-center gap-2">
+                    Generar Excel con IA
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // --- 1. CONFIGURACIÓN Y DATOS MAESTROS DETECO ---
-        const DIAS_HABILES = 22;
-        const DOTACION_TOTAL = 49;
-        
-        let chartInstance = null;
-
-        // Base de datos inyectada con el nuevo campo "area"
-        const datosEPP = [
-            { id: 1, area: 'Enfierradura y Hormigón', nombre: 'Guante Nitrilo NBR', precioNeto: 1890, vidaReal: 12, usuarios: 20, stockActual: 15 },
-            { id: 2, area: 'Enfierradura y Hormigón', nombre: 'Tapón Auditivo', precioNeto: 250, vidaReal: 5, usuarios: 20, stockActual: 100 },
-            { id: 3, area: 'Carpintería y Terminaciones', nombre: 'Guante Cabritilla', precioNeto: 1130, vidaReal: 7, usuarios: 16, stockActual: 10 },
-            { id: 4, area: 'Uso General / Staff', nombre: 'Antiparras Claras', precioNeto: 1840, vidaReal: 15, usuarios: 49, stockActual: 80 },
-            { id: 5, area: 'Soldadura y Riesgo Específico', nombre: 'Guante Descarne', precioNeto: 3230, vidaReal: 12, usuarios: 5, stockActual: 2 },
-            { id: 6, area: 'Soldadura y Riesgo Específico', nombre: 'Guante Antivibración', precioNeto: 4100, vidaReal: 25, usuarios: 5, stockActual: 4 },
-            { id: 7, area: 'Eléctricos y Carguío', nombre: 'Guante Multiflex', precioNeto: 385, vidaReal: 6, usuarios: 8, stockActual: 25 }
+        // 1. Estructura de Datos Base
+        let eppData = [
+            { id: 1, name: "Guante Nitrilo NBR", area: "Enfierradura", price: 1890, daysTheo: 20, daysReal: 12, users: 20, currentStock: 0, pastConsumption: 45 },
+            { id: 2, name: "Guante Cabritilla", area: "Carpintería", price: 1130, daysTheo: 15, daysReal: 7, users: 16, currentStock: 15, pastConsumption: 60 },
+            { id: 3, name: "Guante Multiflex", area: "Eléctricos", price: 385, daysTheo: 10, daysReal: 6, users: 8, currentStock: 5, pastConsumption: 35 },
+            { id: 4, name: "Guante Descarne", area: "Soldadores", price: 3230, daysTheo: 30, daysReal: 12, users: 5, currentStock: 2, pastConsumption: 12 },
+            { id: 5, name: "Guante Antivibración", area: "Soldadores", price: 4100, daysTheo: 45, daysReal: 25, users: 5, currentStock: 0, pastConsumption: 6 },
+            { id: 6, name: "Antiparras In/Out", area: "Toda la Planta", price: 1840, daysTheo: 30, daysReal: 15, users: 49, currentStock: 20, pastConsumption: 85 },
+            { id: 7, name: "Casco de Seguridad", area: "Toda la Planta", price: 1645, daysTheo: 365, daysReal: 365, users: 49, currentStock: 10, pastConsumption: 5 }
         ];
 
-        // Paleta para gráficos
-        const paletaColores = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#64748b', '#0ea5e9', '#ec4899'];
+        let areaChartInstance = null;
+        let projChartInstance = null;
 
-        // --- 2. MOTOR DE CÁLCULOS ---
-        const formatearMoneda = (valor) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(valor);
+        function formatMoney(num) { return num.toLocaleString('es-CL'); }
 
-        function calcularConsumoMes(item) {
-            return item.vidaReal > 0 ? Math.ceil((item.usuarios * DIAS_HABILES) / item.vidaReal) : 0;
-        }
-
-        function calcularStockMinimo(item) {
-            return item.vidaReal > 0 ? Math.ceil((item.usuarios * 7) / item.vidaReal) : 0;
-        }
-
-        // --- 3. FUNCIONES CRUD ---
-        function agregarItem() {
-            const nuevoId = datosEPP.length > 0 ? Math.max(...datosEPP.map(d => d.id)) + 1 : 1;
+        // 2. Motor de Cálculo y Renderizado
+        function calculateAndRender() {
+            const tbody = document.getElementById('table-body');
+            const hourlyTbody = document.getElementById('hourly-table-body');
+            const improvementTbody = document.getElementById('improvement-table-body');
             
-            datosEPP.push({
-                id: nuevoId,
-                area: 'Nueva Área (Editar)',
-                nombre: 'Nuevo Insumo',
-                precioNeto: 0,
-                vidaReal: 1, 
-                usuarios: 1,
-                stockActual: 0
-            });
-            actualizarDatos();
-        }
-
-        function eliminarItem(index) {
-            if(confirm('¿Estás seguro de que deseas eliminar este ítem?')) {
-                datosEPP.splice(index, 1);
-                actualizarDatos();
-            }
-        }
-
-        function actualizarDatos() {
-            let gastoTotalNeto = 0;
-            let itemsCriticos = 0;
-            let totalUnidadesMes = 0;
+            tbody.innerHTML = ''; hourlyTbody.innerHTML = ''; improvementTbody.innerHTML = '';
             
-            // Agrupar datos por Área
-            const datosAgrupados = {};
-            datosEPP.forEach((item, originalIndex) => {
-                if(!datosAgrupados[item.area]) datosAgrupados[item.area] = [];
-                datosAgrupados[item.area].push({ item, originalIndex });
-            });
+            let totalComprarNeto = 0; let totalGastoTeorico = 0; let totalCapitalBodega = 0; 
+            let alertasQuiebre = 0; let totalFugaMensual = 0;
+            let totalGastoHistorico = 0; let totalGastoProyectadoMejora = 0;
+            
+            const gastosPorArea = {}; const diasMes = 22; const diasBuffer = 7; const horasDia = 9;
+            const dataWithIndex = eppData.map((item, index) => ({ ...item, originalIndex: index }));
+            const uniqueAreas = [...new Set(dataWithIndex.map(item => item.area))].sort((a, b) => a === "Toda la Planta" ? 1 : b === "Toda la Planta" ? -1 : a.localeCompare(b));
 
-            const tbody = document.getElementById('tabla-body');
-            tbody.innerHTML = '';
-
-            // Renderizar la tabla agrupada
-            Object.keys(datosAgrupados).forEach(nombreArea => {
-                
-                // 1. Fila de Encabezado del Área
-                const trArea = document.createElement('tr');
-                trArea.className = 'area-header';
-                trArea.innerHTML = `
-                    <td colspan="8" class="px-5 py-2 font-bold text-slate-700">
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            <!-- Input para cambiar el nombre del área de todos los hijos a la vez se requeriría JS extra, aquí editamos por ítem -->
-                            Área: ${nombreArea}
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(trArea);
-
-                // 2. Filas de los EPPs de esta Área
-                datosAgrupados[nombreArea].forEach(data => {
-                    const { item, originalIndex } = data;
-                    
-                    const consumoMes = calcularConsumoMes(item);
-                    const stockMin = calcularStockMinimo(item);
-                    const gastoItemMes = consumoMes * item.precioNeto;
-                    
-                    gastoTotalNeto += gastoItemMes;
-                    totalUnidadesMes += consumoMes;
-                    
-                    const esCritico = item.stockActual < stockMin;
-                    if (esCritico) itemsCriticos++;
-
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors';
-                    tr.innerHTML = `
-                        <td class="px-5 py-3">
-                            <input type="text" data-index="${originalIndex}" data-field="nombre" value="${item.nombre}" 
-                                class="w-full bg-transparent font-semibold text-slate-800 outline-none border-b border-transparent focus:border-blue-400 focus:bg-white mb-1" placeholder="Nombre EPP">
-                            <input type="text" data-index="${originalIndex}" data-field="area" value="${item.area}" 
-                                class="w-full bg-transparent text-xs text-slate-500 outline-none border-b border-transparent focus:border-blue-400 focus:bg-white" placeholder="Área" title="Cambia este texto para reubicar el ítem de área">
-                        </td>
-                        <td class="px-3 py-3">
-                            <input type="number" data-index="${originalIndex}" data-field="usuarios" value="${item.usuarios}" 
-                                class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 px-1 text-center text-sm outline-none">
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="relative flex justify-center">
-                                <span class="absolute left-2 top-1 text-slate-400 text-xs">$</span>
-                                <input type="number" data-index="${originalIndex}" data-field="precioNeto" value="${item.precioNeto}" 
-                                    class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 pl-5 pr-1 text-sm outline-none">
+            uniqueAreas.forEach(area => {
+                // HEADERS
+                const areaHeader = document.createElement('tr');
+                areaHeader.innerHTML = `
+                    <td colspan="10" class="bg-slate-50 border-y border-slate-200 py-2 px-6">
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-400 text-xs">└</span>
+                                <input type="text" class="input-clean uppercase font-bold text-slate-800 text-xs tracking-widest w-64" 
+                                    value="${area}" onchange="updateAreaName('${area}', this.value)" placeholder="Nombre del Área">
                             </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <input type="number" data-index="${originalIndex}" data-field="vidaReal" value="${item.vidaReal}" 
-                                class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 px-1 text-center text-sm outline-none">
-                        </td>
-                        <td class="px-4 py-3">
-                            <input type="number" data-index="${originalIndex}" data-field="stockActual" value="${item.stockActual}" 
-                                class="w-full bg-slate-100 border-transparent focus:bg-white focus:ring-1 focus:ring-blue-400 rounded py-1 px-1 text-center text-sm font-bold text-slate-700 outline-none shadow-inner">
-                        </td>
-                        
-                        <!-- Columnas Informativas -->
-                        <td class="px-4 py-3 text-center bg-blue-50/30">
-                            <span class="font-bold text-blue-800">${consumoMes}</span>
-                        </td>
-                        <td class="px-4 py-3 text-center bg-orange-50/30">
-                            <span class="font-bold ${esCritico ? 'text-red-600 animate-pulse' : 'text-emerald-600'}">${stockMin}</span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <button onclick="eliminarItem(${originalIndex})" class="text-slate-300 hover:text-red-500 transition-colors p-1" title="Eliminar ítem">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </td>
+                            <button onclick="addNewEPP('${area}')" class="text-slate-400 hover:text-slate-800 text-[10px] font-bold uppercase tracking-widest transition">+ Añadir Ítem</button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(areaHeader);
+
+                const hrHeader = document.createElement('tr');
+                hrHeader.innerHTML = `<td colspan="7" class="bg-slate-50 border-y border-slate-200 px-6 py-2 text-xs font-bold text-slate-800 uppercase tracking-widest"><span class="text-slate-400 mr-2">└</span> ${area}</td>`;
+                hourlyTbody.appendChild(hrHeader);
+
+                const impHeader = document.createElement('tr');
+                impHeader.innerHTML = `<td colspan="7" class="bg-slate-50 border-y border-slate-200 px-6 py-2 text-xs font-bold text-slate-800 uppercase tracking-widest"><span class="text-slate-400 mr-2">└</span> ${area}</td>`;
+                improvementTbody.appendChild(impHeader);
+
+                const itemsInArea = dataWithIndex.filter(item => item.area === area);
+                itemsInArea.forEach(item => {
+                    // Módulo 1 (Logística)
+                    const consumo = (diasMes / item.daysReal) * item.users;
+                    const stockMin = Math.ceil((diasBuffer / item.daysReal) * item.users);
+                    const objInventario = Math.ceil(consumo) + stockMin;
+                    const aComprar = Math.max(0, objInventario - item.currentStock);
+                    const gastoRq = aComprar * item.price;
+                    const gastoTeorico = consumo * item.price;
+                    const valorBodega = item.currentStock * item.price;
+
+                    totalComprarNeto += gastoRq; totalGastoTeorico += gastoTeorico; totalCapitalBodega += valorBodega;
+                    if(!gastosPorArea[area]) gastosPorArea[area] = 0; gastosPorArea[area] += gastoTeorico;
+
+                    if (item.currentStock < stockMin) alertasQuiebre++;
+
+                    const stockInputClass = item.currentStock < stockMin ? 'input-clean input-warning' : 'input-clean font-bold text-slate-700';
+                    const numColor = aComprar > 0 ? 'text-slate-800' : 'text-slate-400';
+                    
+                    const row = document.createElement('tr');
+                    row.className = `transition-colors group bg-white hover:bg-slate-50`;
+                    row.innerHTML = `
+                        <td class="px-4 py-2 text-center"><button onclick="deleteEPP(${item.originalIndex})" class="btn-delete text-slate-300 hover:text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td>
+                        <td class="px-2 py-2"><input type="text" class="input-clean font-medium ${numColor}" value="${item.name}" onchange="updateData(${item.originalIndex}, 'name', this.value)"></td>
+                        <td class="px-2 py-2"><input type="number" min="0" class="input-clean text-center text-slate-500" value="${item.users}" onchange="updateData(${item.originalIndex}, 'users', this.value)"></td>
+                        <td class="px-2 py-2"><div class="flex items-center"><span class="text-slate-300 pl-2">$</span><input type="number" min="0" class="input-clean font-mono text-sm ${numColor}" value="${item.price}" onchange="updateData(${item.originalIndex}, 'price', this.value)"></div></td>
+                        <td class="px-4 py-2 bg-slate-50/50"><input type="number" min="0" class="text-center text-base ${stockInputClass}" value="${item.currentStock}" onchange="updateData(${item.originalIndex}, 'currentStock', this.value)"></td>
+                        <td class="px-2 py-2"><input type="number" min="1" class="input-clean text-center font-mono text-sm text-slate-500" value="${item.daysReal}" onchange="updateData(${item.originalIndex}, 'daysReal', this.value)"></td>
+                        <td class="px-3 py-2 text-center text-slate-500">${consumo.toFixed(1)}</td>
+                        <td class="px-3 py-2 text-center text-slate-400">${stockMin}</td>
+                        <td class="px-4 py-2 text-center font-black text-lg ${aComprar > 0 ? 'text-brand' : 'text-slate-300'}">${aComprar}</td>
+                        <td class="px-5 py-2 text-right"><span class="font-bold text-base ${aComprar > 0 ? 'text-slate-800' : 'text-slate-300'}">$${formatMoney(Math.round(gastoRq))}</span></td>
                     `;
-                    tbody.appendChild(tr);
+                    tbody.appendChild(row);
+
+                    // Módulo 2 (Costo Hora)
+                    const costoHrFicha = item.price / (item.daysTheo * horasDia);
+                    const costoHrReal = item.price / (item.daysReal * horasDia);
+                    const brechaHr = costoHrReal - costoHrFicha;
+                    const impactoMensual = ((diasMes / item.daysReal) * item.users * item.price) - ((diasMes / item.daysTheo) * item.users * item.price);
+                    totalFugaMensual += Math.max(0, impactoMensual); 
+
+                    const hrRow = document.createElement('tr');
+                    hrRow.className = "hover:bg-slate-50 transition-colors bg-white";
+                    hrRow.innerHTML = `
+                        <td class="px-6 py-3 font-medium text-slate-700">${item.name}</td>
+                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="1" class="input-clean text-center font-bold text-slate-700" value="${item.daysTheo}" onchange="updateData(${item.originalIndex}, 'daysTheo', this.value)"></td>
+                        <td class="px-4 py-3 text-center font-mono text-slate-500">${item.daysReal}</td>
+                        <td class="px-4 py-3 text-center font-mono text-slate-400">$${costoHrFicha.toFixed(1)}</td>
+                        <td class="px-4 py-3 text-center font-mono text-slate-800">$${costoHrReal.toFixed(1)}</td>
+                        <td class="px-4 py-3 text-center font-mono ${brechaHr > 0 ? 'text-red-500 font-bold' : 'text-emerald-500'}">${brechaHr > 0 ? '+' : ''}$${brechaHr.toFixed(1)}</td>
+                        <td class="px-6 py-3 text-right"><span class="font-bold ${impactoMensual > 0 ? 'text-red-500' : 'text-slate-300'}">$${formatMoney(Math.round(Math.max(0, impactoMensual)))}</span></td>
+                    `;
+                    hourlyTbody.appendChild(hrRow);
+
+                    // Módulo 3 (Mejora Continua)
+                    const consumoProyectado = (diasMes / item.daysReal) * item.users;
+                    const gastoProyectado = consumoProyectado * item.price;
+                    const gastoHistorico = item.pastConsumption * item.price;
+
+                    totalGastoProyectadoMejora += gastoProyectado; totalGastoHistorico += gastoHistorico;
+                    const difUnidades = item.pastConsumption - consumoProyectado;
+                    const impactoFinanciero = gastoHistorico - gastoProyectado;
+                    const statusColor = impactoFinanciero > 0 ? 'text-red-500' : (impactoFinanciero < 0 ? 'text-emerald-500' : 'text-slate-400');
+
+                    const impRow = document.createElement('tr');
+                    impRow.className = `hover:bg-slate-50 transition-colors bg-white`;
+                    impRow.innerHTML = `
+                        <td class="px-6 py-3 font-medium text-slate-700">${item.name}</td>
+                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="0" class="input-clean text-center font-bold text-slate-800" value="${item.pastConsumption}" onchange="updateData(${item.originalIndex}, 'pastConsumption', this.value)"></td>
+                        <td class="px-4 py-3 text-center font-mono text-slate-400">${consumoProyectado.toFixed(1)}</td>
+                        <td class="px-4 py-3 text-center font-mono ${statusColor}">${difUnidades > 0 ? '+' : ''}${difUnidades.toFixed(1)}</td>
+                        <td class="px-4 py-3 text-right font-mono text-slate-500">$${formatMoney(Math.round(gastoHistorico))}</td>
+                        <td class="px-4 py-3 text-right font-mono text-slate-400">$${formatMoney(Math.round(gastoProyectado))}</td>
+                        <td class="px-6 py-3 text-right"><span class="font-bold text-base ${statusColor}">${impactoFinanciero > 0 ? '+' : ''}$${formatMoney(Math.round(impactoFinanciero))}</span></td>
+                    `;
+                    improvementTbody.appendChild(impRow);
                 });
             });
 
-            // --- ACTUALIZAR COMPARATIVO ESTRATÉGICO ---
-            const gastoTotalIva = gastoTotalNeto * 1.19; // El nuevo orden incluye el IVA
-            // Simulamos el Gasto Histórico (Mes Anterior sin control): 
-            // Asumimos un sobrecosto del 35% por pérdida y sobreprecio urgente.
-            const gastoHistoricoIva = gastoTotalIva * 1.35; 
-            const ahorroProyectado = gastoHistoricoIva - gastoTotalIva;
-
-            document.getElementById('comp-anterior').innerText = formatearMoneda(gastoHistoricoIva);
-            document.getElementById('comp-actual').innerText = formatearMoneda(gastoTotalIva);
-            document.getElementById('comp-ahorro').innerText = formatearMoneda(ahorroProyectado);
-
-            // --- ACTUALIZAR KPIs OPERATIVOS ---
-            const costoPromedioDia = (gastoTotalNeto / DIAS_HABILES) / DOTACION_TOTAL;
-
-            document.getElementById('kpi-unidades').innerText = `${totalUnidadesMes} Unidades`;
-            document.getElementById('kpi-apu').innerHTML = `${formatearMoneda(costoPromedioDia)} <span class="text-sm font-normal text-slate-500">/ trab / día</span>`;
+            // Actualizar KPIs Globales
+            document.getElementById('kpi-total-neto').textContent = `$${formatMoney(Math.round(totalComprarNeto))}`;
+            document.getElementById('kpi-total-bruto').textContent = `$${formatMoney(Math.round(totalComprarNeto * 1.19))}`;
+            document.getElementById('kpi-capital-bodega').textContent = `$${formatMoney(Math.round(totalCapitalBodega))}`;
+            document.getElementById('kpi-ahorro-stock').innerHTML = `Ahorro por Stock: $${formatMoney(Math.round(Math.max(0, totalGastoTeorico - totalComprarNeto)))}`;
+            document.getElementById('kpi-fuga-capital').textContent = `-$${formatMoney(Math.round(totalFugaMensual))}`;
+            document.getElementById('kpi-historico').textContent = `$${formatMoney(Math.round(totalGastoHistorico))}`;
+            document.getElementById('kpi-proyectado-mejora').textContent = `$${formatMoney(Math.round(totalGastoProyectadoMejora))}`;
             
-            const kpiStock = document.getElementById('kpi-stock');
-            kpiStock.innerText = `${itemsCriticos} Ítem${itemsCriticos !== 1 ? 's' : ''}`;
-            if(itemsCriticos > 0) {
-                kpiStock.classList.add('text-red-600');
-                kpiStock.classList.remove('text-orange-800');
+            const deltaMejora = totalGastoHistorico - totalGastoProyectadoMejora;
+            const kpiDesv = document.getElementById('kpi-desviacion');
+            if (deltaMejora > 0) { kpiDesv.textContent = `+$${formatMoney(Math.round(deltaMejora))}`; kpiDesv.className = "text-xl font-black text-red-500"; } 
+            else if (deltaMejora < 0) { kpiDesv.textContent = `-$${formatMoney(Math.round(Math.abs(deltaMejora)))}`; kpiDesv.className = "text-xl font-black text-emerald-500"; } 
+            else { kpiDesv.textContent = `$0`; kpiDesv.className = "text-xl font-black text-slate-600"; }
+
+            if (alertasQuiebre > 0) {
+                document.getElementById('alert-title').className = "text-[10px] font-bold text-red-500 uppercase tracking-widest mb-1";
+                document.getElementById('alert-title').innerText = "Alerta de Quiebre";
+                document.getElementById('kpi-alertas').className = "text-3xl font-black text-red-600";
+                document.getElementById('kpi-alertas').innerText = `${alertasQuiebre} Ítems`;
+                document.getElementById('alert-subtitle').className = "text-xs text-red-400 mt-2 font-medium";
+                document.getElementById('alert-subtitle').innerText = "Bajo stock mínimo";
             } else {
-                kpiStock.classList.remove('text-red-600');
-                kpiStock.classList.add('text-emerald-600');
+                document.getElementById('alert-title').className = "text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1";
+                document.getElementById('alert-title').innerText = "Estado Inventario";
+                document.getElementById('kpi-alertas').className = "text-3xl font-black text-slate-800";
+                document.getElementById('kpi-alertas').innerText = "Óptimo";
+                document.getElementById('alert-subtitle').className = "text-xs text-slate-400 mt-2";
+                document.getElementById('alert-subtitle').innerText = "Cobertura asegurada";
             }
 
-            // --- ACTUALIZAR GRÁFICO DE BARRAS POR ÁREA ---
-            const labelsGrafico = [];
-            const datosGrafico = [];
-            
-            Object.keys(datosAgrupados).forEach(nombreArea => {
-                let gastoArea = 0;
-                datosAgrupados[nombreArea].forEach(data => {
-                    const cMes = calcularConsumoMes(data.item);
-                    gastoArea += cMes * data.item.precioNeto;
-                });
-                labelsGrafico.push(nombreArea);
-                datosGrafico.push(gastoArea);
-            });
-
-            actualizarGrafico(labelsGrafico, datosGrafico);
+            renderCharts(gastosPorArea, totalComprarNeto, totalGastoTeorico);
         }
 
-        // --- 4. GRÁFICO (Chart.js) ---
-        function actualizarGrafico(labels, data) {
-            const ctx = document.getElementById('gastoChart').getContext('2d');
-            
-            // Generar colores basados en el número de áreas
-            const bgColors = labels.map((_, i) => paletaColores[i % paletaColores.length]);
+        function updateData(index, field, value) {
+            if (field === 'name') { eppData[index][field] = value; } 
+            else { const num = parseFloat(value); if (!isNaN(num) && num >= 0) eppData[index][field] = num; }
+            calculateAndRender();
+        }
 
-            if (chartInstance) {
-                chartInstance.data.labels = labels;
-                chartInstance.data.datasets[0].data = data;
-                chartInstance.data.datasets[0].backgroundColor = bgColors;
-                chartInstance.update();
+        function updateAreaName(oldArea, newArea) {
+            if(!newArea.trim()) return;
+            eppData.forEach(item => { if (item.area === oldArea) item.area = newArea.trim(); });
+            calculateAndRender();
+        }
+        function addNewArea() { eppData.push({ id: Date.now(), name: "Nuevo EPP", area: "NUEVA ÁREA", price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); calculateAndRender(); }
+        function addNewEPP(areaName) { eppData.push({ id: Date.now(), name: "Nuevo Insumo", area: areaName, price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); calculateAndRender(); }
+        function deleteEPP(index) { if(confirm("¿Seguro que deseas eliminar este ítem?")) { eppData.splice(index, 1); calculateAndRender(); } }
+
+        function renderCharts(gastosAreaMap, gastoMes1, gastoTeorico) {
+            const labelsArea = Object.keys(gastosAreaMap);
+            const dataArea = Object.values(gastosAreaMap).map(v => Math.round(v));
+            if(areaChartInstance) areaChartInstance.destroy();
+            areaChartInstance = new Chart(document.getElementById('areaChart').getContext('2d'), {
+                type: 'bar', data: { labels: labelsArea, datasets: [{ label: 'Gasto Estimado ($)', data: dataArea, backgroundColor: '#ea580c', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+            if(projChartInstance) projChartInstance.destroy();
+            projChartInstance = new Chart(document.getElementById('projectionChart').getContext('2d'), {
+                type: 'line', data: { labels: ['Mes 1 (Actual)', 'Mes 2', 'Mes 3', 'Mes 4', 'Mes 5', 'Mes 6'], datasets: [{ label: 'Proyección ($)', data: [gastoMes1, gastoTeorico, gastoTeorico, gastoTeorico, gastoTeorico, gastoTeorico], borderColor: '#64748b', backgroundColor: 'rgba(100, 116, 139, 0.1)', borderWidth: 2, pointBackgroundColor: '#1e293b', pointRadius: 4, fill: true, tension: 0.2 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        // ==========================================
+        // INTEGRACIÓN CON GEMINI AI
+        // ==========================================
+        function openAIModal() {
+            document.getElementById('ai-modal').classList.add('active');
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) document.getElementById('gemini-api-key').value = savedKey;
+        }
+
+        function closeAIModal() {
+            document.getElementById('ai-modal').classList.remove('active');
+        }
+
+        async function processAIExport() {
+            const apiKey = document.getElementById('gemini-api-key').value.trim();
+            if (!apiKey) {
+                alert("Por favor, ingresa tu API Key de Gemini.");
                 return;
             }
-
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Inversión Neta Mensual ($)',
-                        data: data,
-                        backgroundColor: bgColors,
-                        borderRadius: 4,
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(context.parsed.y);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { 
-                                font: { size: 10 },
-                                maxRotation: 45,
-                                minRotation: 45
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // --- 5. EVENTOS E INTERACTIVIDAD ---
-        // Delegación de eventos para capturar los inputs editables en la tabla
-        document.getElementById('tabla-body').addEventListener('input', function(e) {
-            if (e.target.tagName === 'INPUT') {
-                const index = e.target.getAttribute('data-index');
-                const field = e.target.getAttribute('data-field');
-                
-                if (e.target.type === 'number') {
-                    let value = parseFloat(e.target.value);
-                    if (isNaN(value) || value < 0) value = 0;
-                    datosEPP[index][field] = value;
-                } else {
-                    datosEPP[index][field] = e.target.value;
-                }
-                
-                // Recalcular todo en vivo
-                actualizarDatos();
-            }
-        });
-
-        function exportarSimulacion() {
-            const btn = document.querySelector('button.bg-emerald-600');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Procesando Reporte...`;
             
-            setTimeout(() => {
-                alert("¡Reporte consolidado con éxito! \n\nLos datos históricos y el nuevo APU agrupado por áreas se han exportado según la matriz.");
-                btn.innerHTML = originalText;
-            }, 1000);
+            // Guardar para futuro uso
+            localStorage.setItem('gemini_api_key', apiKey);
+
+            // Cambiar UI a loading
+            document.getElementById('ai-buttons').classList.add('hidden');
+            document.getElementById('ai-loading').classList.remove('hidden');
+            document.getElementById('ai-loading').classList.add('flex');
+
+            try {
+                // Preparar datos para el Prompt
+                const kpiBruto = document.getElementById('kpi-total-bruto').textContent;
+                const kpiFuga = document.getElementById('kpi-fuga-capital').textContent;
+                const kpiDesv = document.getElementById('kpi-desviacion').textContent;
+                
+                const promptText = `
+                Actúa como un experto en logística y control de costos para una empresa constructora e industrial.
+                A continuación te proporciono los datos actuales del inventario y consumo de Elementos de Protección Personal (EPP):
+                
+                DATOS DE ITEMS:
+                ${JSON.stringify(eppData.map(e => ({Item: e.name, Area: e.area, Precio: e.price, VidaRealDias: e.daysReal, VidaFichaDias: e.daysTheo, Stock: e.currentStock, ConsumoPasado: e.pastConsumption})))}
+
+                DATOS GLOBALES DEL MES:
+                - Inversión a Comprar Requerida: ${kpiBruto}
+                - Fuga de Capital Mensual (Costo por no cumplir vida teórica): ${kpiFuga}
+                - Desviación Histórica vs Meta: ${kpiDesv}
+
+                Por favor, redacta un "Resumen Ejecutivo de Análisis Logístico" de máximo 3 párrafos en formato texto limpio (sin markdown ni asteriscos). 
+                1. Analiza dónde está el mayor riesgo de gasto.
+                2. Comenta sobre la fuga de capital generada por el desgaste prematuro.
+                3. Entrega una recomendación operativa clave para reducir costos.
+                `;
+
+                // Llamada a la API de Gemini
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                });
+
+                if (!response.ok) throw new Error("Error en la conexión con Gemini. Verifica tu API Key.");
+                
+                const data = await response.json();
+                const aiAnalysis = data.candidates[0].content.parts[0].text;
+
+                // Generar Excel con IA
+                exportExcel(aiAnalysis);
+                closeAIModal();
+
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un problema al procesar con IA: " + error.message);
+            } finally {
+                // Restaurar UI
+                document.getElementById('ai-buttons').classList.remove('hidden');
+                document.getElementById('ai-loading').classList.add('hidden');
+                document.getElementById('ai-loading').classList.remove('flex');
+            }
         }
 
-        // Inicializar al cargar
-        document.addEventListener('DOMContentLoaded', actualizarDatos);
+        // ==========================================
+        // EXPORTACIÓN A EXCEL (Dashboard + Opcional IA)
+        // ==========================================
+        function exportExcel(aiReportText = false) {
+            const wb = XLSX.utils.book_new();
+            const sortedData = [...eppData].sort((a, b) => a.area.localeCompare(b.area));
 
+            // Hoja 1: Matriz combinada para Dashboard Analítico
+            const ws_data = [
+                ['DASHBOARD DE CONTROL LOGÍSTICO Y ANÁLISIS DE COSTOS'],
+                [],
+                [
+                    'ÁREA / CARGO', 'DESCRIPCIÓN EPP', 'USUARIOS', 'PRECIO NETO ($)', 
+                    'STOCK BODEGA', 'VIDA REAL (DÍAS)', 'VIDA FICHA (DÍAS)',
+                    'A COMPRAR (UNID)', 'INVERSIÓN REQUERIDA ($)',
+                    'COSTO/HR TEÓRICO ($)', 'COSTO/HR REAL ($)', 'FUGA APU MES ($)',
+                    'CONS. MES ANTERIOR', 'META MES APU', 'DESVIACIÓN (UNID)'
+                ]
+            ];
+
+            sortedData.forEach((item, i) => {
+                const r = i + 4; // Fila Excel 1-based
+                ws_data.push([
+                    item.area, item.name, item.users, item.price, item.currentStock, item.daysReal, item.daysTheo,
+                    { t: 'n', f: `MAX(0, CEILING((22/F${r})*C${r}, 1) + CEILING((7/F${r})*C${r}, 1) - E${r})` }, // A Comprar
+                    { t: 'n', f: `H${r}*D${r}` }, // Inv. Req
+                    { t: 'n', f: `D${r}/(G${r}*9)` }, // Costo Hr Teo
+                    { t: 'n', f: `D${r}/(F${r}*9)` }, // Costo Hr Real
+                    { t: 'n', f: `((22/F${r})*C${r}*D${r}) - ((22/G${r})*C${r}*D${r})` }, // Fuga APU
+                    item.pastConsumption, 
+                    { t: 'n', f: `(22/F${r})*C${r}` }, // Meta Mes
+                    { t: 'n', f: `M${r}-N${r}` } // Desviación
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            ws['!cols'] = [{wch: 20}, {wch: 35}, {wch: 10}, {wch: 15}, {wch: 15}, {wch: 18}, {wch: 18}, {wch: 18}, {wch: 22}, {wch: 20}, {wch: 20}, {wch: 20}, {wch: 20}, {wch: 18}, {wch: 20}];
+            XLSX.utils.book_append_sheet(wb, ws, "Dashboard Resumen");
+
+            // Si hay reporte de IA, agregar la segunda hoja
+            if (aiReportText) {
+                const ai_ws_data = [
+                    ['ANÁLISIS EJECUTIVO - GENERADO POR GOOGLE GEMINI AI'],
+                    [],
+                    [aiReportText]
+                ];
+                const ai_ws = XLSX.utils.aoa_to_sheet(ai_ws_data);
+                ai_ws['!cols'] = [{wch: 120}]; // Columna ancha para leer bien
+                XLSX.utils.book_append_sheet(wb, ai_ws, "Análisis Estratégico IA");
+            }
+
+            XLSX.writeFile(wb, "Reporte_Logistico_Integrado.xlsx");
+        }
+
+        // ==========================================
+        // EXPORTACIÓN A PDF (A4 Vertical, 1 Hoja)
+        // ==========================================
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4'); 
+            
+            doc.setFontSize(16);
+            doc.setTextColor(30, 41, 59); 
+            doc.text("REPORTE LOGÍSTICO Y ANÁLISIS DE COSTOS EPP", 14, 15);
+            doc.setFontSize(8);
+            doc.setTextColor(100, 116, 139); 
+            doc.text(`Fecha de Emisión: ${new Date().toLocaleDateString('es-CL')} | Documento de Control Interno`, 14, 20);
+
+            const sortedData = [...eppData].sort((a, b) => a.area.localeCompare(b.area));
+            const generalStyles = { fontSize: 7, cellPadding: 2 };
+            const headStylesColor = { fillColor: [30, 41, 59] };
+
+            // --- TABLA 1 ---
+            doc.setFontSize(10); doc.setTextColor(30, 41, 59);
+            doc.text("1. LOGÍSTICA DE COMPRAS (ORDEN)", 14, 28);
+            const body1 = sortedData.map(item => {
+                const consumo = (22 / item.daysReal) * item.users;
+                const min = Math.ceil((7 / item.daysReal) * item.users);
+                const aComprar = Math.max(0, Math.ceil(consumo) + min - item.currentStock);
+                return [ item.area, item.name, item.users, "$" + formatMoney(item.price), item.currentStock, item.daysReal, aComprar, "$" + formatMoney(aComprar * item.price) ];
+            });
+            doc.autoTable({
+                head: [['ÁREA', 'DESCRIPCIÓN', 'USU.', 'PRECIO', 'STOCK', 'VIDA', 'A COMPRAR', 'TOTAL ($)']],
+                body: body1, startY: 31, theme: 'grid', styles: generalStyles, headStyles: headStylesColor,
+                columnStyles: { 0: { fontStyle: 'bold' }, 6: { fontStyle: 'bold', textColor: [234, 88, 12] }, 7: { halign: 'right' } }
+            });
+
+            // --- TABLA 2 ---
+            let nextY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(10); doc.setTextColor(30, 41, 59);
+            doc.text("2. ANÁLISIS DE COSTO POR HORA (APU)", 14, nextY);
+            const body2 = sortedData.map(item => {
+                const costoHrF = item.price / (item.daysTheo * 9);
+                const costoHrR = item.price / (item.daysReal * 9);
+                const fuga = ((22 / item.daysReal) * item.users * item.price) - ((22 / item.daysTheo) * item.users * item.price);
+                return [ item.area, item.name, item.daysTheo, item.daysReal, "$" + costoHrF.toFixed(1), "$" + costoHrR.toFixed(1), "$" + formatMoney(Math.round(Math.max(0, fuga))) ];
+            });
+            doc.autoTable({
+                head: [['ÁREA', 'DESCRIPCIÓN', 'DÍAS FICHA', 'DÍAS REAL', '$/HR TEO.', '$/HR REAL', 'FUGA MES ($)']],
+                body: body2, startY: nextY + 3, theme: 'grid', styles: generalStyles, headStyles: headStylesColor,
+                columnStyles: { 0: { fontStyle: 'bold' }, 6: { halign: 'right', textColor: [239, 68, 68] } }
+            });
+
+            // --- TABLA 3 ---
+            nextY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(10); doc.setTextColor(30, 41, 59);
+            doc.text("3. ANÁLISIS HISTÓRICO VS APU", 14, nextY);
+            const body3 = sortedData.map(item => {
+                const consProy = (22 / item.daysReal) * item.users;
+                const impFinan = (item.pastConsumption * item.price) - (consProy * item.price);
+                return [ item.area, item.name, item.pastConsumption, consProy.toFixed(1), (item.pastConsumption - consProy).toFixed(1), "$" + formatMoney(Math.round(impFinan)) ];
+            });
+            doc.autoTable({
+                head: [['ÁREA', 'DESCRIPCIÓN', 'CONS. HIST.', 'META APU', 'DESVIACIÓN', 'IMPACTO ($)']],
+                body: body3, startY: nextY + 3, theme: 'grid', styles: generalStyles, headStyles: headStylesColor,
+                columnStyles: { 0: { fontStyle: 'bold' }, 5: { halign: 'right', fontStyle: 'bold' } }
+            });
+
+            doc.save("Reporte_Logistico_Vertical.pdf");
+        }
+
+        window.onload = calculateAndRender;
     </script>
 </body>
 </html>
