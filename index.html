@@ -173,6 +173,7 @@
                     </tr>
                 </thead>
                 <tbody id="bodega-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
+                <tfoot id="bodega-table-foot" class="border-t-2 border-slate-300 bg-slate-100"></tfoot>
             </table>
         </div>
     </div>
@@ -345,14 +346,14 @@
             "Rodillera": 16
         };
 
-        // Consumo Histórico Mensual para medir desviación (Según PDF)
+        // Consumo Histórico Mensual para medir desviación (Según PDF y nueva captura)
         let globalPastConsumptionDict = {
-            "Antiparras": 25,
+            "Antiparras": 42,
             "Botín Seguridad": 4,
             "Casco": 5,
-            "Guante Cabritilla": 50,
-            "Guante Multiflex": 30,
-            "Guante Nitrilo": 25,
+            "Guante Cabritilla": 171,
+            "Guante Multiflex": 178,
+            "Guante Nitrilo": 2,
             "Rodillera": 2
         }; 
 
@@ -381,10 +382,12 @@
         function calculateAndRender() {
             const tbody = document.getElementById('table-body');
             const bodegaTbody = document.getElementById('bodega-table-body');
+            const bodegaTfoot = document.getElementById('bodega-table-foot');
             const hourlyTbody = document.getElementById('hourly-table-body');
             const improvementTbody = document.getElementById('improvement-table-body');
             
-            tbody.innerHTML = ''; bodegaTbody.innerHTML = ''; hourlyTbody.innerHTML = ''; improvementTbody.innerHTML = '';
+            tbody.innerHTML = ''; bodegaTbody.innerHTML = ''; bodegaTfoot.innerHTML = ''; 
+            hourlyTbody.innerHTML = ''; improvementTbody.innerHTML = '';
             
             let totalComprarNeto = 0; let totalGastoTeorico = 0; let totalCapitalBodega = 0; 
             let alertasQuiebre = 0;
@@ -393,26 +396,22 @@
             let gastoTeoricoPorArea = {}; 
             let globalDemandDict = {}; 
 
-            const diasMes = 20; // Modificado: 20 días hábiles (lunes a viernes)
-            const semanasMes = 4; // Modificado: 20 días = 4 semanas exactas
-            const semanasReserva = 2; // 10 días hábiles = 2 semanas
+            const diasMes = 20; 
+            const semanasMes = 4; 
+            const semanasReserva = 2; 
             const horasDia = 9;
 
-            // Construir áreas únicas
             const uniqueAreas = [...new Set(eppData.map(item => item.area))].sort((a, b) => a === "Toda la Planta" ? 1 : b === "Toda la Planta" ? -1 : a.localeCompare(b));
 
             // --- 1. PROCESAR Y DIBUJAR ÁREAS (DEMANDA) ---
             uniqueAreas.forEach(areaName => {
-                
-                // Obtener datos del área desde config (para los usuarios)
                 let areaObj = areasConfigData.find(a => a.name === areaName);
                 if (!areaObj) {
-                    areaObj = { name: areaName, users: 1, items: [] }; // Fallback para áreas nuevas
+                    areaObj = { name: areaName, users: 1, items: [] }; 
                     areasConfigData.push(areaObj);
                 }
                 const numUsers = areaObj.users;
 
-                // Header Módulo 1 (Requerimientos) - Usuarios integrados al header
                 const areaHeader = document.createElement('tr');
                 areaHeader.innerHTML = `
                     <td colspan="7" class="bg-slate-100 border-y border-slate-300 py-2 px-6">
@@ -437,7 +436,6 @@
                 tbody.appendChild(areaHeader);
                 const subtotalReqSpan = areaHeader.querySelector('.area-subtotal-req');
 
-                // Header Módulo 2 (Costo Hora)
                 const hrHeader = document.createElement('tr');
                 hrHeader.innerHTML = `
                     <td colspan="4" class="bg-slate-100 border-y border-slate-300 px-6 py-2 text-xs font-bold text-slate-800 uppercase tracking-widest">
@@ -455,8 +453,6 @@
 
                 const itemsInArea = eppData.filter(item => item.area === areaName);
                 itemsInArea.forEach(item => {
-                    
-                    // Cálculo Demanda Pura (Módulo 1)
                     const consumo = item.changesPerWeek * semanasMes * numUsers;
                     const stockMin = item.changesPerWeek * semanasReserva * numUsers;
                     const reqTotal = Math.ceil(consumo) + Math.ceil(stockMin);
@@ -465,7 +461,6 @@
 
                     areaTotalReq += presupuestoReq;
 
-                    // Agregar a consolidado global
                     if (!globalDemandDict[item.name]) {
                         globalDemandDict[item.name] = { req: 0, metaAPU: 0, price: item.price };
                     }
@@ -476,7 +471,6 @@
                     if(gastoTeoricoPorArea[areaName] === undefined) gastoTeoricoPorArea[areaName] = 0; 
                     gastoTeoricoPorArea[areaName] += gastoTeorico;
 
-                    // Render Tabla 1.1 (Requerimientos, sin stock ni col de usuarios repetida)
                     const row = document.createElement('tr');
                     row.className = `transition-colors group bg-white hover:bg-slate-50`;
                     row.innerHTML = `
@@ -491,7 +485,6 @@
                     `;
                     tbody.appendChild(row);
 
-                    // --- Módulo 2 (Costo Semanal / Mensual) ---
                     const diasVidaRealRef = item.changesPerWeek > 0 ? (5 / item.changesPerWeek) : 365;
                     const costoSemanaUnit = item.changesPerWeek * item.price;
                     const costoMesUnit = costoSemanaUnit * semanasMes;
@@ -511,7 +504,6 @@
                     hourlyTbody.appendChild(hrRow);
                 });
 
-                // Actualizar los subtotales calculados en el encabezado
                 subtotalReqSpan.textContent = `$${formatMoney(Math.round(areaTotalReq))}`;
                 subtotalCostSpan.textContent = `$${formatMoney(Math.round(areaTotalGastoMes))}`;
             });
@@ -548,6 +540,14 @@
                 `;
                 bodegaTbody.appendChild(bRow);
             });
+
+            // Agregar Pie de Tabla de Bodega con el Total a Comprar
+            bodegaTfoot.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-right text-slate-700 font-bold uppercase tracking-widest text-xs">Total Orden de Compra (Neto):</td>
+                    <td class="px-6 py-4 text-right text-2xl font-black text-brand">$${formatMoney(Math.round(totalComprarNeto))}</td>
+                </tr>
+            `;
 
             // --- 3. PROCESAR TABLA DE MEJORA CONTINUA (CONSOLIDADO HISTÓRICO VS META) ---
             uniqueItemsNames.forEach(itemName => {
@@ -908,6 +908,14 @@
                     startRow++;
                 });
 
+                // Sumatoria Total en Excel Bodega
+                ws.getCell(`E${startRow}`).value = 'TOTAL COMPRA (NETO):';
+                ws.getCell(`E${startRow}`).font = { bold: true, color: { argb: 'FF1E293B' } };
+                ws.getCell(`E${startRow}`).alignment = { horizontal: 'right' };
+                ws.getCell(`F${startRow}`).value = { formula: `SUM(F${startRow - uniqueItemsNames.length}:F${startRow - 1})` };
+                ws.getCell(`F${startRow}`).numFmt = '"$"#,##0';
+                ws.getCell(`F${startRow}`).font = { bold: true, color: { argb: 'FFEA580C' } };
+
                 startRow += 2;
                 ws.getCell(`A${startRow}`).value = '2. ANÁLISIS DE COSTOS (SEMANAL Y MENSUAL)';
                 ws.getCell(`A${startRow}`).font = { bold: true, size: 12, color: { argb: 'FF1E293B' } };
@@ -1050,16 +1058,26 @@
             doc.setFontSize(10); doc.setTextColor(brandColor[0], brandColor[1], brandColor[2]); 
             doc.text("1.2 BODEGA CENTRAL Y ORDEN DE COMPRA (OFERTA)", 14, nextY);
             
+            let totalComprarNetoPDF = 0;
             const bodyBodega = Object.keys(globalDemandPDF).sort().map(itemName => {
                 const dem = globalDemandPDF[itemName];
                 const stock = globalStockDict[itemName] || 0;
                 const aComprar = Math.max(0, dem.req - stock);
-                return [itemName, "$" + formatMoney(dem.price), dem.req, stock, aComprar, "$" + formatMoney(aComprar * dem.price)];
+                const costoInvertir = aComprar * dem.price;
+                totalComprarNetoPDF += costoInvertir;
+                
+                return [itemName, "$" + formatMoney(dem.price), dem.req, stock, aComprar, "$" + formatMoney(costoInvertir)];
             });
 
             doc.autoTable({
                 head: [['ÍTEM EPP', 'PRECIO', 'DEMANDA GLOBAL', 'STOCK BODEGA', 'ORDEN COMPRA', 'INVERSIÓN ($)']],
-                body: bodyBodega, startY: nextY + 3, theme: 'grid', styles: generalStyles, headStyles: { fillColor: brandColor, textColor: 255 },
+                body: bodyBodega, 
+                foot: [['', '', '', '', 'TOTAL A COMPRAR:', '$' + formatMoney(totalComprarNetoPDF)]],
+                startY: nextY + 3, 
+                theme: 'grid', 
+                styles: generalStyles, 
+                headStyles: { fillColor: brandColor, textColor: 255 },
+                footStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' },
                 columnStyles: { 0: { fontStyle: 'bold' }, 4: { fontStyle: 'bold' }, 5: { halign: 'right' } }
             });
 
