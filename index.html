@@ -182,11 +182,11 @@
     <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <header class="border-b border-slate-200 px-6 py-5 flex justify-between items-center bg-white">
             <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-slate-800"></span> 2. Análisis de Costo por Hora y Desgaste
+                <span class="w-2 h-2 rounded-full bg-slate-800"></span> 2. ANÁLISIS DE COSTO (SEMANAL Y MENSUAL)
             </h2>
             <div class="text-right flex items-center gap-4">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fuga de Capital Teórica</p>
-                <h3 id="kpi-fuga-capital" class="text-xl font-black text-slate-800">-$0</h3>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Gasto Total Proyectado</p>
+                <h3 id="kpi-gasto-total-mes" class="text-xl font-black text-slate-800">$0</h3>
             </div>
         </header>
         <div class="table-container overflow-x-auto">
@@ -194,12 +194,10 @@
                 <thead>
                     <tr class="border-b-2 border-slate-200 bg-white text-slate-400 text-[10px] uppercase tracking-wider font-bold">
                         <th class="px-6 py-3">Ítem (Solo Lectura)</th>
-                        <th class="px-4 py-3 text-center text-slate-600" title="Editable: Vida útil según fabricante">Vida Ficha (Días)</th>
-                        <th class="px-4 py-3 text-center" title="Días calculados según los cambios x semana ingresados arriba">Días Reales (Ref)</th>
-                        <th class="px-4 py-3 text-center">Costo/Hr Teórico</th>
-                        <th class="px-4 py-3 text-center">Costo/Hr Real</th>
-                        <th class="px-4 py-3 text-center">Brecha/Hora</th>
-                        <th class="px-6 py-3 text-right text-slate-600">Impacto Mensual ($)</th>
+                        <th class="px-4 py-3 text-center" title="Días calculados según los cambios x semana ingresados">Días Reales (Ref)</th>
+                        <th class="px-4 py-3 text-center">Costo / Sem (x Usuario)</th>
+                        <th class="px-4 py-3 text-center">Costo / Mes (x Usuario)</th>
+                        <th class="px-6 py-3 text-right text-slate-600">Gasto Total Área / Mes ($)</th>
                     </tr>
                 </thead>
                 <tbody id="hourly-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -207,23 +205,26 @@
         </div>
     </div>
 
-    <!-- MÓDULO 3: MEJORA CONTINUA -->
+    <!-- MÓDULO 3: MEJORA CONTINUA (CONSOLIDADO) -->
     <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <header class="border-b border-slate-200 px-6 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white">
-            <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-slate-400"></span> 3. Análisis de Mejora
-            </h2>
+            <div>
+                <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-slate-400"></span> 3. ANÁLISIS DE MEJORA: HISTÓRICO VS. META GLOBAL
+                </h2>
+                <p class="text-xs text-slate-500 mt-1 ml-4 font-medium">Comparativa consolidada del consumo total de toda la planta en el mes.</p>
+            </div>
             <div class="flex gap-6 text-right items-center">
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Histórico</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Histórico Global</p>
                     <h3 id="kpi-historico" class="text-lg font-black text-slate-600">$0</h3>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Meta APU</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Meta APU Global</p>
                     <h3 id="kpi-proyectado-mejora" class="text-lg font-black text-slate-600">$0</h3>
                 </div>
                 <div class="pl-6 border-l border-slate-200">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Desviación Financiera</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Desviación (Fuga Real)</p>
                     <h3 id="kpi-desviacion" class="text-xl font-black text-slate-900">$0</h3>
                 </div>
             </div>
@@ -232,13 +233,13 @@
             <table class="w-full text-left border-collapse whitespace-nowrap">
                 <thead>
                     <tr class="border-b-2 border-slate-200 bg-white text-slate-400 text-[10px] uppercase tracking-wider font-bold">
-                        <th class="px-6 py-3">Descripción (EPP)</th>
-                        <th class="px-4 py-3 text-center text-slate-600">Consumo Histórico</th>
-                        <th class="px-4 py-3 text-center">Meta APU</th>
+                        <th class="px-6 py-3 w-[280px]">Ítem EPP Único</th>
+                        <th class="px-4 py-3 text-center text-slate-600" title="Consumo real entregado por bodega el mes pasado">Consumo Histórico (Mes)</th>
+                        <th class="px-4 py-3 text-center">Meta APU (Mes)</th>
                         <th class="px-4 py-3 text-center">Desv. (Unid)</th>
-                        <th class="px-4 py-3 text-right">Gasto Hist.</th>
-                        <th class="px-4 py-3 text-right">Gasto Meta</th>
-                        <th class="px-6 py-3 text-right text-slate-600">Impacto ($)</th>
+                        <th class="px-4 py-3 text-right">Gasto Histórico ($)</th>
+                        <th class="px-4 py-3 text-right">Gasto Meta ($)</th>
+                        <th class="px-6 py-3 text-right text-slate-600">Impacto Financiero ($)</th>
                     </tr>
                 </thead>
                 <tbody id="improvement-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -289,20 +290,22 @@
         ];
 
         const itemMaster = {
-            "Guante Cabritilla": { price: 1130, daysTheo: 15, changesPerWeek: 1, stock: 15, pastConsumption: 12 },
-            "Guante Multiflex": { price: 385, daysTheo: 10, changesPerWeek: 1, stock: 10, pastConsumption: 8 },
-            "Guante Soldador": { price: 3230, daysTheo: 30, changesPerWeek: 0.5, stock: 5, pastConsumption: 5 },
-            "Guante Nitrilo": { price: 1890, daysTheo: 20, changesPerWeek: 0.5, stock: 10, pastConsumption: 15 },
-            "Rodillera": { price: 8500, daysTheo: 60, changesPerWeek: 0.1, stock: 2, pastConsumption: 1 },
-            "Antiparras": { price: 1840, daysTheo: 30, changesPerWeek: 0.3, stock: 8, pastConsumption: 5 },
-            "Casco": { price: 1645, daysTheo: 365, changesPerWeek: 0.02, stock: 5, pastConsumption: 1 },
-            "Botín Seguridad": { price: 24500, daysTheo: 180, changesPerWeek: 0.04, stock: 5, pastConsumption: 1 }
+            "Guante Cabritilla": { price: 1130, changesPerWeek: 1, stock: 15, pastConsumption: 50 },
+            "Guante Multiflex": { price: 385, changesPerWeek: 1, stock: 10, pastConsumption: 30 },
+            "Guante Soldador": { price: 3230, changesPerWeek: 0.5, stock: 5, pastConsumption: 12 },
+            "Guante Nitrilo": { price: 1890, changesPerWeek: 0.5, stock: 10, pastConsumption: 25 },
+            "Rodillera": { price: 8500, changesPerWeek: 0.1, stock: 2, pastConsumption: 2 },
+            "Antiparras": { price: 1840, changesPerWeek: 0.3, stock: 8, pastConsumption: 25 },
+            "Casco": { price: 1645, changesPerWeek: 0.02, stock: 5, pastConsumption: 5 },
+            "Botín Seguridad": { price: 24500, changesPerWeek: 0.04, stock: 5, pastConsumption: 4 }
         };
 
-        // Diccionario de Stock Global (separado de las filas de área)
         let globalStockDict = {};
+        let globalPastConsumptionDict = {}; 
+        
         for(let key in itemMaster) {
             globalStockDict[key] = itemMaster[key].stock;
+            globalPastConsumptionDict[key] = itemMaster[key].pastConsumption;
         }
 
         let eppData = [];
@@ -317,10 +320,8 @@
                         name: itemName,
                         area: area.name,
                         price: epp.price,
-                        daysTheo: epp.daysTheo,
                         changesPerWeek: epp.changesPerWeek,
-                        users: area.users,
-                        pastConsumption: epp.pastConsumption
+                        users: area.users
                     });
                 }
             });
@@ -340,66 +341,77 @@
             tbody.innerHTML = ''; bodegaTbody.innerHTML = ''; hourlyTbody.innerHTML = ''; improvementTbody.innerHTML = '';
             
             let totalComprarNeto = 0; let totalGastoTeorico = 0; let totalCapitalBodega = 0; 
-            let alertasQuiebre = 0; let totalFugaMensual = 0;
+            let alertasQuiebre = 0;
             let totalGastoHistorico = 0; let totalGastoProyectadoMejora = 0;
             
             let gastoTeoricoPorArea = {}; 
-            let gastoHistoricoPorArea = {};
-            let globalDemandDict = {}; // Consolidado de demanda
+            let globalDemandDict = {}; 
 
-            const diasMes = 22; 
-            const semanasMes = 4.4; // 22 días hábiles = 4.4 semanas
-            const semanasReserva = 2; // 14 días = 2 semanas
-            const horasDia = 9;
+            const semanasMes = 4.4; 
+            const semanasReserva = 2; 
 
             const uniqueAreas = [...new Set(eppData.map(item => item.area))].sort((a, b) => a === "Toda la Planta" ? 1 : b === "Toda la Planta" ? -1 : a.localeCompare(b));
 
             // --- 1. PROCESAR Y DIBUJAR ÁREAS (DEMANDA) ---
             uniqueAreas.forEach(area => {
+                // Header Módulo 1 (Requerimientos)
                 const areaHeader = document.createElement('tr');
                 areaHeader.innerHTML = `
-                    <td colspan="10" class="bg-slate-50 border-y border-slate-200 py-2 px-6">
+                    <td colspan="8" class="bg-slate-100 border-y border-slate-300 py-2 px-6">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center gap-2">
                                 <span class="text-slate-400 text-xs">└</span>
                                 <input type="text" class="input-clean uppercase font-bold text-slate-800 text-xs tracking-widest w-64" 
                                     value="${area}" onchange="updateAreaName('${area}', this.value)" placeholder="Nombre del Área">
                             </div>
-                            <button onclick="addNewEPP('${area}')" class="text-slate-400 hover:text-slate-800 text-[10px] font-bold uppercase tracking-widest transition">+ Añadir Ítem</button>
+                            <button onclick="addNewEPP('${area}')" class="text-slate-500 hover:text-slate-800 text-[10px] font-bold uppercase tracking-widest transition">+ Añadir Ítem</button>
                         </div>
+                    </td>
+                    <td class="bg-slate-100 border-y border-slate-300 py-2 px-6 text-right">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none mb-1">Total Ppto. Req.</span>
+                        <span class="area-subtotal-req font-black text-slate-700 text-sm">$0</span>
                     </td>`;
                 tbody.appendChild(areaHeader);
+                const subtotalReqSpan = areaHeader.querySelector('.area-subtotal-req');
 
+                // Header Módulo 2 (Costo Hora)
                 const hrHeader = document.createElement('tr');
-                hrHeader.innerHTML = `<td colspan="7" class="bg-slate-50 border-y border-slate-200 px-6 py-2 text-xs font-bold text-slate-800 uppercase tracking-widest"><span class="text-slate-400 mr-2">└</span> ${area}</td>`;
+                hrHeader.innerHTML = `
+                    <td colspan="4" class="bg-slate-100 border-y border-slate-300 px-6 py-2 text-xs font-bold text-slate-800 uppercase tracking-widest">
+                        <span class="text-slate-400 mr-2">└</span> ${area}
+                    </td>
+                    <td class="bg-slate-100 border-y border-slate-300 px-6 py-2 text-right">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase block leading-none mb-1">Total Área / Mes</span>
+                        <span class="area-subtotal-cost text-sm font-black text-brand tracking-widest">$0</span>
+                    </td>`;
                 hourlyTbody.appendChild(hrHeader);
+                const subtotalCostSpan = hrHeader.querySelector('.area-subtotal-cost');
 
-                const impHeader = document.createElement('tr');
-                impHeader.innerHTML = `<td colspan="7" class="bg-slate-50 border-y border-slate-200 px-6 py-2 text-xs font-bold text-slate-800 uppercase tracking-widest"><span class="text-slate-400 mr-2">└</span> ${area}</td>`;
-                improvementTbody.appendChild(impHeader);
+                let areaTotalReq = 0;
+                let areaTotalGastoMes = 0;
 
                 const itemsInArea = eppData.filter(item => item.area === area);
                 itemsInArea.forEach(item => {
                     
-                    // Cálculo Demanda Pura
+                    // Cálculo Demanda Pura (Módulo 1)
                     const consumo = item.changesPerWeek * semanasMes * item.users;
                     const stockMin = item.changesPerWeek * semanasReserva * item.users;
                     const reqTotal = Math.ceil(consumo) + Math.ceil(stockMin);
                     const presupuestoReq = reqTotal * item.price;
                     const gastoTeorico = consumo * item.price;
-                    const gastoHistorico = item.pastConsumption * item.price;
+
+                    areaTotalReq += presupuestoReq;
 
                     // Agregar a consolidado global
                     if (!globalDemandDict[item.name]) {
-                        globalDemandDict[item.name] = { req: 0, price: item.price };
+                        globalDemandDict[item.name] = { req: 0, metaAPU: 0, price: item.price };
                     }
                     globalDemandDict[item.name].req += reqTotal;
+                    globalDemandDict[item.name].metaAPU += consumo;
 
                     totalGastoTeorico += gastoTeorico; 
                     if(gastoTeoricoPorArea[area] === undefined) gastoTeoricoPorArea[area] = 0; 
                     gastoTeoricoPorArea[area] += gastoTeorico;
-                    if(gastoHistoricoPorArea[area] === undefined) gastoHistoricoPorArea[area] = 0;
-                    gastoHistoricoPorArea[area] += gastoHistorico;
 
                     // Render Tabla 1.1 (Requerimientos, sin stock)
                     const row = document.createElement('tr');
@@ -417,58 +429,38 @@
                     `;
                     tbody.appendChild(row);
 
-                    // Módulo 2 (Costo Hora)
+                    // --- Módulo 2 (Costo Semanal / Mensual) ---
                     const diasVidaRealRef = item.changesPerWeek > 0 ? (5 / item.changesPerWeek) : 365;
-                    const costoHrFicha = item.price / (item.daysTheo * horasDia);
-                    const costoHrReal = item.price / (diasVidaRealRef * horasDia);
-                    const brechaHr = costoHrReal - costoHrFicha;
-                    const impactoMensual = ((diasMes / diasVidaRealRef) * item.users * item.price) - ((diasMes / item.daysTheo) * item.users * item.price);
-                    totalFugaMensual += Math.max(0, impactoMensual); 
+                    const costoSemanaUnit = item.changesPerWeek * item.price;
+                    const costoMesUnit = costoSemanaUnit * semanasMes;
+                    const gastoAreaMes = costoMesUnit * item.users;
+
+                    areaTotalGastoMes += gastoAreaMes;
 
                     const hrRow = document.createElement('tr');
                     hrRow.className = "hover:bg-slate-50 transition-colors bg-white";
                     hrRow.innerHTML = `
                         <td class="px-6 py-3 font-medium text-slate-700">${item.name}</td>
-                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="1" class="input-clean text-center font-bold text-slate-700" value="${item.daysTheo}" onchange="updateData(${item.id}, 'daysTheo', this.value)"></td>
                         <td class="px-4 py-3 text-center font-mono text-slate-500">${diasVidaRealRef.toFixed(1)}</td>
-                        <td class="px-4 py-3 text-center font-mono text-slate-400">$${costoHrFicha.toFixed(1)}</td>
-                        <td class="px-4 py-3 text-center font-mono text-slate-800">$${costoHrReal.toFixed(1)}</td>
-                        <td class="px-4 py-3 text-center font-mono ${brechaHr > 0 ? 'text-red-500 font-bold' : 'text-emerald-500'}">${brechaHr > 0 ? '+' : ''}$${brechaHr.toFixed(1)}</td>
-                        <td class="px-6 py-3 text-right"><span class="font-bold ${impactoMensual > 0 ? 'text-red-500' : 'text-slate-300'}">$${formatMoney(Math.round(Math.max(0, impactoMensual)))}</span></td>
+                        <td class="px-4 py-3 text-center font-mono text-slate-600">$${formatMoney(Math.round(costoSemanaUnit))}</td>
+                        <td class="px-4 py-3 text-center font-mono text-slate-800">$${formatMoney(Math.round(costoMesUnit))}</td>
+                        <td class="px-6 py-3 text-right"><span class="font-bold text-brand">$${formatMoney(Math.round(gastoAreaMes))}</span></td>
                     `;
                     hourlyTbody.appendChild(hrRow);
-
-                    // Módulo 3 (Mejora Continua)
-                    totalGastoProyectadoMejora += gastoTeorico; 
-                    totalGastoHistorico += gastoHistorico;
-
-                    const difUnidades = item.pastConsumption - consumo;
-                    const impactoFinanciero = gastoHistorico - gastoTeorico;
-                    const statusColor = impactoFinanciero > 0 ? 'text-red-500' : (impactoFinanciero < 0 ? 'text-emerald-500' : 'text-slate-400');
-
-                    const impRow = document.createElement('tr');
-                    impRow.className = `hover:bg-slate-50 transition-colors bg-white`;
-                    impRow.innerHTML = `
-                        <td class="px-6 py-3 font-medium text-slate-700">${item.name}</td>
-                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="0" class="input-clean text-center font-bold text-slate-800" value="${item.pastConsumption}" onchange="updateData(${item.id}, 'pastConsumption', this.value)"></td>
-                        <td class="px-4 py-3 text-center font-mono text-slate-400">${consumo.toFixed(1)}</td>
-                        <td class="px-4 py-3 text-center font-mono ${statusColor}">${difUnidades > 0 ? '+' : ''}${difUnidades.toFixed(1)}</td>
-                        <td class="px-4 py-3 text-right font-mono text-slate-500">$${formatMoney(Math.round(gastoHistorico))}</td>
-                        <td class="px-4 py-3 text-right font-mono text-slate-400">$${formatMoney(Math.round(gastoTeorico))}</td>
-                        <td class="px-6 py-3 text-right"><span class="font-bold text-base ${statusColor}">${impactoFinanciero > 0 ? '+' : ''}$${formatMoney(Math.round(impactoFinanciero))}</span></td>
-                    `;
-                    improvementTbody.appendChild(impRow);
                 });
+
+                // Actualizar los subtotales calculados en el encabezado
+                subtotalReqSpan.textContent = `$${formatMoney(Math.round(areaTotalReq))}`;
+                subtotalCostSpan.textContent = `$${formatMoney(Math.round(areaTotalGastoMes))}`;
             });
 
-            // --- 2. PROCESAR Y DIBUJAR TABLA DE BODEGA GLOBAL ---
+            // --- 2. PROCESAR TABLA DE BODEGA GLOBAL (OFERTA) ---
             const uniqueItemsNames = Object.keys(globalDemandDict).sort();
             uniqueItemsNames.forEach(itemName => {
                 const dem = globalDemandDict[itemName];
                 const stockDisponible = globalStockDict[itemName] || 0;
                 const aComprarGlobal = Math.max(0, dem.req - stockDisponible);
                 const costoAInvertir = aComprarGlobal * dem.price;
-                const ahorroBodega = Math.min(dem.req, stockDisponible) * dem.price;
 
                 totalComprarNeto += costoAInvertir;
                 totalCapitalBodega += (stockDisponible * dem.price);
@@ -495,12 +487,46 @@
                 bodegaTbody.appendChild(bRow);
             });
 
+            // --- 3. PROCESAR TABLA DE MEJORA CONTINUA (CONSOLIDADO HISTÓRICO VS META) ---
+            uniqueItemsNames.forEach(itemName => {
+                const metaAPU = globalDemandDict[itemName].metaAPU;
+                const precio = globalDemandDict[itemName].price;
+                const historico = globalPastConsumptionDict[itemName] || 0;
+                
+                const gastoProyectado = metaAPU * precio;
+                const gastoHistorico = historico * precio;
+                
+                totalGastoProyectadoMejora += gastoProyectado; 
+                totalGastoHistorico += gastoHistorico;
+
+                const difUnidades = historico - metaAPU;
+                const impactoFinanciero = gastoHistorico - gastoProyectado;
+                const statusColor = impactoFinanciero > 0 ? 'text-red-500' : (impactoFinanciero < 0 ? 'text-emerald-500' : 'text-slate-400');
+
+                const impRow = document.createElement('tr');
+                impRow.className = `hover:bg-slate-50 transition-colors bg-white`;
+                impRow.innerHTML = `
+                    <td class="px-6 py-4 font-bold text-slate-700">${itemName}</td>
+                    <td class="px-4 py-4 bg-slate-50/50">
+                        <input type="number" min="0" class="input-clean text-center font-bold text-slate-800 w-24 mx-auto block" value="${historico}" onchange="updateGlobalPastConsumption('${itemName}', this.value)">
+                    </td>
+                    <td class="px-4 py-4 text-center font-mono text-slate-400">${metaAPU.toFixed(1)}</td>
+                    <td class="px-4 py-4 text-center font-mono ${statusColor}">${difUnidades > 0 ? '+' : ''}${difUnidades.toFixed(1)}</td>
+                    <td class="px-4 py-4 text-right font-mono text-slate-500">$${formatMoney(Math.round(gastoHistorico))}</td>
+                    <td class="px-4 py-4 text-right font-mono text-slate-400">$${formatMoney(Math.round(gastoProyectado))}</td>
+                    <td class="px-6 py-4 text-right"><span class="font-bold text-base ${statusColor}">${impactoFinanciero > 0 ? '+' : ''}$${formatMoney(Math.round(impactoFinanciero))}</span></td>
+                `;
+                improvementTbody.appendChild(impRow);
+            });
+
             // Actualizar KPIs Globales
             document.getElementById('kpi-total-neto').textContent = `$${formatMoney(Math.round(totalComprarNeto))}`;
             document.getElementById('kpi-total-bruto').textContent = `$${formatMoney(Math.round(totalComprarNeto * 1.19))}`;
             document.getElementById('kpi-capital-bodega').textContent = `$${formatMoney(Math.round(totalCapitalBodega))}`;
             document.getElementById('kpi-ahorro-stock').innerHTML = `Ahorro por Stock: $${formatMoney(Math.round(Math.max(0, totalGastoTeorico - totalComprarNeto)))}`;
-            document.getElementById('kpi-fuga-capital').textContent = `-$${formatMoney(Math.round(totalFugaMensual))}`;
+            
+            document.getElementById('kpi-gasto-total-mes').textContent = `$${formatMoney(Math.round(totalGastoTeorico))}`;
+            
             document.getElementById('kpi-historico').textContent = `$${formatMoney(Math.round(totalGastoHistorico))}`;
             document.getElementById('kpi-proyectado-mejora').textContent = `$${formatMoney(Math.round(totalGastoProyectadoMejora))}`;
             
@@ -526,13 +552,32 @@
                 document.getElementById('alert-subtitle').innerText = "Demanda cubierta";
             }
 
-            renderCharts(gastoTeoricoPorArea, gastoHistoricoPorArea, totalComprarNeto, totalGastoTeorico, totalGastoHistorico);
+            let estimacionHistoricoArea = {};
+            uniqueAreas.forEach(area => {
+                const itemsInArea = eppData.filter(item => item.area === area);
+                itemsInArea.forEach(item => {
+                    const pesoArea = item.users / (globalDemandDict[item.name]?.req || 1);
+                    const histoAsignado = (globalPastConsumptionDict[item.name] || 0) * pesoArea;
+                    if(estimacionHistoricoArea[area] === undefined) estimacionHistoricoArea[area] = 0;
+                    estimacionHistoricoArea[area] += (histoAsignado * item.price);
+                });
+            });
+
+            renderCharts(gastoTeoricoPorArea, estimacionHistoricoArea, totalComprarNeto, totalGastoTeorico, totalGastoHistorico);
         }
 
         function updateGlobalStock(itemName, value) {
             const num = parseFloat(value);
             if (!isNaN(num) && num >= 0) {
                 globalStockDict[itemName] = num;
+            }
+            calculateAndRender();
+        }
+
+        function updateGlobalPastConsumption(itemName, value) {
+            const num = parseFloat(value);
+            if (!isNaN(num) && num >= 0) {
+                globalPastConsumptionDict[itemName] = num;
             }
             calculateAndRender();
         }
@@ -544,9 +589,8 @@
             if (field === 'name') { 
                 const oldName = eppData[index].name;
                 eppData[index][field] = value; 
-                if (globalStockDict[value] === undefined) {
-                    globalStockDict[value] = globalStockDict[oldName] || 0;
-                }
+                if (globalStockDict[value] === undefined) globalStockDict[value] = globalStockDict[oldName] || 0;
+                if (globalPastConsumptionDict[value] === undefined) globalPastConsumptionDict[value] = globalPastConsumptionDict[oldName] || 0;
             } 
             else { 
                 const num = parseFloat(value); 
@@ -564,14 +608,16 @@
         function addNewArea() { 
             const newName = "Nuevo EPP";
             if (globalStockDict[newName] === undefined) globalStockDict[newName] = 0;
-            eppData.push({ id: Date.now(), name: newName, area: "NUEVA ÁREA", price: 0, daysTheo: 30, changesPerWeek: 1, users: 1, pastConsumption: 0 }); 
+            if (globalPastConsumptionDict[newName] === undefined) globalPastConsumptionDict[newName] = 0;
+            eppData.push({ id: Date.now(), name: newName, area: "NUEVA ÁREA", price: 0, changesPerWeek: 1, users: 1 }); 
             calculateAndRender(); 
         }
         
         function addNewEPP(areaName) { 
             const newName = "Nuevo Insumo";
             if (globalStockDict[newName] === undefined) globalStockDict[newName] = 0;
-            eppData.push({ id: Date.now(), name: newName, area: areaName, price: 0, daysTheo: 30, changesPerWeek: 1, users: 1, pastConsumption: 0 }); 
+            if (globalPastConsumptionDict[newName] === undefined) globalPastConsumptionDict[newName] = 0;
+            eppData.push({ id: Date.now(), name: newName, area: areaName, price: 0, changesPerWeek: 1, users: 1 }); 
             calculateAndRender(); 
         }
         
@@ -582,10 +628,10 @@
             } 
         }
 
-        function renderCharts(gastoTeoricoPorArea, gastoHistoricoPorArea, gastoMes1, gastoTeorico, gastoHistorico) {
+        function renderCharts(gastoTeoricoPorArea, estimacionHistoricoArea, gastoMes1, gastoTeorico, gastoHistorico) {
             const labelsArea = Object.keys(gastoTeoricoPorArea);
             const dataTeorico = Object.values(gastoTeoricoPorArea).map(v => Math.round(v));
-            const dataHistorico = labelsArea.map(area => Math.round(gastoHistoricoPorArea[area] || 0));
+            const dataHistorico = labelsArea.map(area => Math.round(estimacionHistoricoArea[area] || 0));
 
             if(areaChartInstance) areaChartInstance.destroy();
             areaChartInstance = new Chart(document.getElementById('areaChart').getContext('2d'), {
@@ -620,9 +666,6 @@
             });
         }
 
-        // ==========================================
-        // INTEGRACIÓN CON GEMINI AI 
-        // ==========================================
         function openAIModal() {
             document.getElementById('ai-modal').classList.add('active');
             const savedKey = localStorage.getItem('gemini_api_key');
@@ -644,31 +687,29 @@
 
             try {
                 const kpiBruto = document.getElementById('kpi-total-bruto').textContent;
-                const kpiFuga = document.getElementById('kpi-fuga-capital').textContent;
                 const kpiDesv = document.getElementById('kpi-desviacion').textContent;
                 
                 const promptText = `
                 Actúa como un Analista Senior de Datos, Experto en Logística, Adquisiciones (Chile) y Diseño de Dashboards.
-                Te proporciono la base de datos de consumo de EPP actual de nuestra planta:
+                Te proporciono la base de datos de consumo de EPP actual de nuestra planta (Consolidado Histórico):
                 
                 DATOS JSON:
-                ${JSON.stringify(eppData.map(e => ({Item: e.name, Area: e.area, Precio: e.price, CambiosXSemana: e.changesPerWeek, Stock: globalStockDict[e.name], ConsumoPasado: e.pastConsumption})))}
+                ${JSON.stringify(Object.keys(globalPastConsumptionDict).map(name => ({Item: name, StockBodega: globalStockDict[name], ConsumoPasado: globalPastConsumptionDict[name]})))}
 
                 DATOS GLOBALES DEL MES:
                 - Inversión a Comprar Requerida: ${kpiBruto}
-                - Fuga de Capital Mensual: ${kpiFuga}
                 - Desviación Histórica vs Meta: ${kpiDesv}
 
                 Estructura tu respuesta en los siguientes 3 pasos, sin usar formato markdown de código (solo texto limpio):
                 
                 1. Extracción y Lógica Inversa:
-                Analiza los datos. Deduce qué insumo genera la mayor fuga de capital y qué área está sobre-consumiendo según su histórico.
+                Analiza los datos. Deduce qué insumo genera la mayor fuga de capital y justifica.
                 
                 2. Fórmulas de Automatización:
-                Sugiéreme 2 fórmulas robustas de Excel que me servirían para seguir automatizando esta tabla.
+                Sugiéreme 2 fórmulas robustas de Excel que me servirían para seguir automatizando un control de inventario.
                 
                 3. Diseño y Visualización:
-                Dame 3 instrucciones de formato rápido para que mi Excel se vea como el de un consultor.
+                Dame 3 instrucciones de formato rápido para que mi Excel se vea como el de un consultor corporativo.
                 `;
 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -694,9 +735,6 @@
             }
         }
 
-        // ==========================================
-        // EXPORTACIÓN A EXCEL (Dashboard Vertical Dividido)
-        // ==========================================
         async function exportExcel(aiReportText = false) {
             try {
                 const wb = new ExcelJS.Workbook();
@@ -715,7 +753,6 @@
                 ws.addImage(imgAreaId, { tl: { col: 0, row: 3 }, br: { col: 4, row: 15 } });
                 ws.addImage(imgProjId, { tl: { col: 5, row: 3 }, br: { col: 9, row: 15 } });
 
-                // 3. TABLA 1: REQUERIMIENTOS
                 let startRow = 17;
                 ws.getCell(`A${startRow}`).value = '1.1 REQUERIMIENTOS POR CUADRILLA (DEMANDA)';
                 ws.getCell(`A${startRow}`).font = { bold: true, size: 12, color: { argb: 'FF1E293B' } };
@@ -738,16 +775,15 @@
                     const row = ws.getRow(startRow);
                     row.values = [
                         item.area, item.name, item.users, item.price, item.changesPerWeek,
-                        { formula: `E${startRow}*4.4*C${startRow}` }, // Meta Mes
-                        { formula: `E${startRow}*2*C${startRow}` }, // Crítico 14D (2 sem)
-                        { formula: `CEILING(F${startRow}, 1) + CEILING(G${startRow}, 1)` }, // Req. Total
-                        { formula: `H${startRow}*D${startRow}` } // Ppto
+                        { formula: `E${startRow}*4.4*C${startRow}` }, 
+                        { formula: `E${startRow}*2*C${startRow}` }, 
+                        { formula: `CEILING(F${startRow}, 1) + CEILING(G${startRow}, 1)` }, 
+                        { formula: `H${startRow}*D${startRow}` } 
                     ];
                     row.getCell(4).numFmt = '"$"#,##0'; row.getCell(9).numFmt = '"$"#,##0';
                     startRow++;
                 });
 
-                // TABLA 2: BODEGA GLOBAL
                 startRow += 2;
                 ws.getCell(`A${startRow}`).value = '1.2 BODEGA CENTRAL Y ORDEN DE COMPRA (OFERTA)';
                 ws.getCell(`A${startRow}`).font = { bold: true, size: 12, color: { argb: 'FFEA580C' } };
@@ -764,28 +800,92 @@
 
                 startRow++;
                 
-                // Formular la suma condicional (SUMIF) para Demanda Global
                 const endAreaRow = startRow - 4; 
                 const uniqueItemsNames = Object.keys(globalStockDict).sort();
                 
+                let precioPorItem = {};
+                eppData.forEach(item => precioPorItem[item.name] = item.price);
+
                 uniqueItemsNames.forEach((itemName) => {
                     const row = ws.getRow(startRow);
-                    const precio = itemMaster[itemName]?.price || 0;
+                    const precio = precioPorItem[itemName] || 0;
                     
                     row.values = [
                         itemName,
                         precio,
-                        { formula: `SUMIF(B20:B${endAreaRow}, A${startRow}, H20:H${endAreaRow})` }, // Demanda Global basada en tabla arriba
-                        globalStockDict[itemName], // Stock actual 
-                        { formula: `MAX(0, C${startRow} - D${startRow})` }, // A Comprar
-                        { formula: `E${startRow}*B${startRow}` } // Inversion
+                        { formula: `SUMIF(B20:B${endAreaRow}, A${startRow}, H20:H${endAreaRow})` }, 
+                        globalStockDict[itemName], 
+                        { formula: `MAX(0, C${startRow} - D${startRow})` }, 
+                        { formula: `E${startRow}*B${startRow}` } 
                     ];
                     row.getCell(2).numFmt = '"$"#,##0'; row.getCell(6).numFmt = '"$"#,##0';
                     row.getCell(5).font = { bold: true, color: { argb: 'FF1E293B' } };
                     startRow++;
                 });
 
-                // Anchos de columna
+                startRow += 2;
+                ws.getCell(`A${startRow}`).value = '2. ANÁLISIS DE COSTOS (SEMANAL Y MENSUAL)';
+                ws.getCell(`A${startRow}`).font = { bold: true, size: 12, color: { argb: 'FF1E293B' } };
+                
+                startRow++;
+                const headerRowCosto = ws.getRow(startRow);
+                headerRowCosto.values = [
+                    'ÁREA / CARGO', 'DESCRIPCIÓN EPP', 'DÍAS REALES (REF)', 'COSTO/SEM (X USU)', 'COSTO/MES (X USU)', 'GASTO ÁREA / MES ($)'
+                ];
+                headerRowCosto.eachCell((cell) => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+                    cell.font = { color: { argb: 'FFFFFFFF' }, bold: true };
+                });
+
+                startRow++;
+                sortedData.forEach((item, idx) => {
+                    const row = ws.getRow(startRow);
+                    const costoSem = item.changesPerWeek * item.price;
+                    
+                    row.values = [
+                        item.area, item.name, 
+                        (item.changesPerWeek > 0 ? (5/item.changesPerWeek) : 365),
+                        costoSem,
+                        costoSem * 4.4,
+                        (costoSem * 4.4) * item.users
+                    ];
+                    row.getCell(3).numFmt = '0.0'; row.getCell(4).numFmt = '"$"#,##0'; row.getCell(5).numFmt = '"$"#,##0'; row.getCell(6).numFmt = '"$"#,##0';
+                    startRow++;
+                });
+
+                startRow += 2;
+                ws.getCell(`A${startRow}`).value = '3. ANÁLISIS DE MEJORA: HISTÓRICO VS META GLOBAL';
+                ws.getCell(`A${startRow}`).font = { bold: true, size: 12, color: { argb: 'FFEA580C' } };
+                
+                startRow++;
+                const headerRowImp = ws.getRow(startRow);
+                headerRowImp.values = [
+                    'ÍTEM EPP ÚNICO', 'CONSUMO HIST. (MES)', 'META APU (MES)', 'DESV. (UNID)', 'GASTO HIST. ($)', 'GASTO META ($)', 'IMPACTO ($)'
+                ];
+                headerRowImp.eachCell((cell) => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEA580C' } };
+                    cell.font = { color: { argb: 'FFFFFFFF' }, bold: true };
+                });
+
+                startRow++;
+                uniqueItemsNames.forEach((itemName) => {
+                    const row = ws.getRow(startRow);
+                    const precio = precioPorItem[itemName] || 0;
+                    
+                    row.values = [
+                        itemName,
+                        globalPastConsumptionDict[itemName] || 0,
+                        { formula: `SUMIF(B20:B${endAreaRow}, A${startRow}, F20:F${endAreaRow})` }, 
+                        { formula: `B${startRow} - C${startRow}` }, 
+                        { formula: `B${startRow} * ${precio}` }, 
+                        { formula: `C${startRow} * ${precio}` }, 
+                        { formula: `E${startRow} - F${startRow}` } 
+                    ];
+                    row.getCell(3).numFmt = '0.0'; row.getCell(4).numFmt = '0.0';
+                    row.getCell(5).numFmt = '"$"#,##0'; row.getCell(6).numFmt = '"$"#,##0'; row.getCell(7).numFmt = '"$"#,##0';
+                    startRow++;
+                });
+
                 ws.columns.forEach((col, idx) => {
                     if (idx === 1) col.width = 30; else col.width = 18; 
                 });
@@ -815,9 +915,6 @@
             }
         }
 
-        // ==========================================
-        // EXPORTACIÓN A PDF
-        // ==========================================
         function exportPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4'); 
@@ -846,8 +943,9 @@
                 const stockMin = item.changesPerWeek * 2 * item.users;
                 const reqTotal = Math.ceil(consumo) + Math.ceil(stockMin);
                 
-                if (!globalDemandPDF[item.name]) globalDemandPDF[item.name] = { req: 0, price: item.price };
+                if (!globalDemandPDF[item.name]) globalDemandPDF[item.name] = { req: 0, metaAPU: 0, price: item.price };
                 globalDemandPDF[item.name].req += reqTotal;
+                globalDemandPDF[item.name].metaAPU += consumo;
 
                 return [ item.area, item.name, item.users, "$" + formatMoney(item.price), item.changesPerWeek, consumo.toFixed(1), Math.ceil(stockMin), reqTotal, "$" + formatMoney(reqTotal * item.price) ];
             });
@@ -878,18 +976,39 @@
             // --- TABLA 2 ---
             nextY = doc.lastAutoTable.finalY + 10;
             doc.setFontSize(10); doc.setTextColor(30, 41, 59);
-            doc.text("2. ANÁLISIS DE COSTO POR HORA (APU)", 14, nextY);
+            doc.text("2. ANÁLISIS DE COSTO (SEMANAL Y MENSUAL)", 14, nextY);
             const body2 = sortedData.map(item => {
                 const diasVidaRealRef = item.changesPerWeek > 0 ? (5 / item.changesPerWeek) : 365;
-                const costoHrF = item.price / (item.daysTheo * 9);
-                const costoHrR = item.price / (diasVidaRealRef * 9);
-                const fuga = ((22 / diasVidaRealRef) * item.users * item.price) - ((22 / item.daysTheo) * item.users * item.price);
-                return [ item.area, item.name, item.daysTheo, diasVidaRealRef.toFixed(1), "$" + costoHrF.toFixed(1), "$" + costoHrR.toFixed(1), "$" + formatMoney(Math.round(Math.max(0, fuga))) ];
+                const costoSemanaUnit = item.changesPerWeek * item.price;
+                const costoMesUnit = costoSemanaUnit * 4.4;
+                const gastoAreaMes = costoMesUnit * item.users;
+                return [ item.area, item.name, diasVidaRealRef.toFixed(1), "$" + formatMoney(Math.round(costoSemanaUnit)), "$" + formatMoney(Math.round(costoMesUnit)), "$" + formatMoney(Math.round(gastoAreaMes)) ];
             });
             doc.autoTable({
-                head: [['ÁREA', 'DESCRIPCIÓN', 'DÍAS FICHA', 'DÍAS REAL', '$/HR TEO.', '$/HR REAL', 'FUGA MES ($)']],
+                head: [['ÁREA', 'DESCRIPCIÓN', 'DÍAS REAL (REF)', 'COSTO/SEM (X USU)', 'COSTO/MES (X USU)', 'GASTO ÁREA / MES ($)']],
                 body: body2, startY: nextY + 3, theme: 'grid', styles: generalStyles, headStyles: headStylesColor,
-                columnStyles: { 0: { fontStyle: 'bold' }, 6: { halign: 'right', textColor: [239, 68, 68] } }
+                columnStyles: { 0: { fontStyle: 'bold' }, 5: { halign: 'right', fontStyle: 'bold' } }
+            });
+
+            // --- TABLA 3 ---
+            nextY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(10); doc.setTextColor(30, 41, 59);
+            doc.text("3. ANÁLISIS DE MEJORA (CONSOLIDADO)", 14, nextY);
+            const body3 = Object.keys(globalDemandPDF).sort().map(itemName => {
+                const metaAPU = globalDemandPDF[itemName].metaAPU;
+                const precio = globalDemandPDF[itemName].price;
+                const historico = globalPastConsumptionDict[itemName] || 0;
+                
+                const gastoProyectado = metaAPU * precio;
+                const gastoHistorico = historico * precio;
+                const impFinan = gastoHistorico - gastoProyectado;
+                
+                return [ itemName, historico, metaAPU.toFixed(1), (historico - metaAPU).toFixed(1), "$" + formatMoney(Math.round(gastoHistorico)), "$" + formatMoney(Math.round(gastoProyectado)), "$" + formatMoney(Math.round(impFinan)) ];
+            });
+            doc.autoTable({
+                head: [['ÍTEM EPP', 'CONS. HIST.', 'META APU', 'DESVIACIÓN', 'GASTO HIST.', 'GASTO META', 'IMPACTO ($)']],
+                body: body3, startY: nextY + 3, theme: 'grid', styles: generalStyles, headStyles: headStylesColor,
+                columnStyles: { 0: { fontStyle: 'bold' }, 6: { halign: 'right', fontStyle: 'bold' } }
             });
 
             doc.save("Reporte_Logistico_Deteco.pdf");
