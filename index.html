@@ -279,50 +279,97 @@
     </div>
 
     <script>
-        // Array de áreas donde indicamos la cantidad de usuarios, este número se edita en la interfaz
+        // Array de áreas donde indicamos la cantidad de usuarios y los consumos específicos (C/SEM) por EPP extraídos del PDF
         let areasConfigData = [
-            { name: "Carguío", users: 2, items: ["Guante Multiflex", "Antiparras", "Casco", "Botín Seguridad"] },
-            { name: "Carpintería", users: 6, items: ["Guante Cabritilla", "Guante Multiflex", "Antiparras", "Casco", "Botín Seguridad"] },
-            { name: "Eléctrico", users: 7, items: ["Guante Cabritilla", "Guante Multiflex", "Antiparras", "Casco", "Botín Seguridad"] },
-            { name: "Enfierrador", users: 14, items: ["Guante Cabritilla", "Antiparras", "Casco", "Botín Seguridad"] },
-            { name: "Hormigón", users: 8, items: ["Guante Cabritilla", "Guante Nitrilo", "Antiparras", "Casco", "Botín Seguridad"] },
-            { name: "Soldador", users: 3, items: ["Guante Cabritilla", "Rodillera", "Antiparras", "Casco", "Botín Seguridad"] }
+            { name: "Carguío", users: 2, items: [
+                { name: "Guante Multiflex", c: 2 },
+                { name: "Antiparras", c: 1 },
+                { name: "Casco", c: 0.02 },
+                { name: "Botín Seguridad", c: 0.04 }
+            ]},
+            { name: "Carpintería", users: 6, items: [
+                { name: "Guante Cabritilla", c: 2 },
+                { name: "Guante Multiflex", c: 2 },
+                { name: "Antiparras", c: 1 },
+                { name: "Casco", c: 0.02 },
+                { name: "Botín Seguridad", c: 0.04 }
+            ]},
+            { name: "Eléctrico", users: 7, items: [
+                { name: "Guante Cabritilla", c: 2 },
+                { name: "Guante Multiflex", c: 2 },
+                { name: "Antiparras", c: 1 },
+                { name: "Casco", c: 0.02 },
+                { name: "Botín Seguridad", c: 0.04 }
+            ]},
+            { name: "Enfierrador", users: 14, items: [
+                { name: "Guante Cabritilla", c: 3 },
+                { name: "Antiparras", c: 1 },
+                { name: "Casco", c: 0.02 },
+                { name: "Botín Seguridad", c: 0.04 }
+            ]},
+            { name: "Hormigón", users: 8, items: [
+                { name: "Guante Cabritilla", c: 1 },
+                { name: "Guante Nitrilo", c: 3 },
+                { name: "Antiparras", c: 2 },
+                { name: "Casco", c: 0.02 },
+                { name: "Botín Seguridad", c: 0.04 }
+            ]},
+            { name: "Soldador", users: 3, items: [
+                { name: "Guante Cabritilla", c: 3 },
+                { name: "Rodillera", c: 0.1 },
+                { name: "Antiparras", c: 2 },
+                { name: "Casco", c: 0.02 },
+                { name: "Botín Seguridad", c: 0.04 }
+            ]}
         ];
 
-        const itemMaster = {
-            "Guante Cabritilla": { price: 1130, changesPerWeek: 1, stock: 15, pastConsumption: 50 },
-            "Guante Multiflex": { price: 385, changesPerWeek: 1, stock: 10, pastConsumption: 30 },
-            "Guante Soldador": { price: 3230, changesPerWeek: 0.5, stock: 5, pastConsumption: 12 },
-            "Guante Nitrilo": { price: 1890, changesPerWeek: 0.5, stock: 10, pastConsumption: 25 },
-            "Rodillera": { price: 8500, changesPerWeek: 0.1, stock: 2, pastConsumption: 2 },
-            "Antiparras": { price: 1840, changesPerWeek: 0.3, stock: 8, pastConsumption: 25 },
-            "Casco": { price: 3410, changesPerWeek: 0.02, stock: 5, pastConsumption: 5 },
-            "Botín Seguridad": { price: 24500, changesPerWeek: 0.04, stock: 5, pastConsumption: 4 }
+        // Lista maestra de precios netos
+        const itemPrices = {
+            "Guante Cabritilla": 1130,
+            "Guante Multiflex": 385,
+            "Guante Nitrilo": 1890,
+            "Rodillera": 8500,
+            "Antiparras": 1840,
+            "Casco": 3410,
+            "Botín Seguridad": 24500
         };
 
-        let globalStockDict = {};
-        let globalPastConsumptionDict = {}; 
-        
-        for(let key in itemMaster) {
-            globalStockDict[key] = itemMaster[key].stock;
-            globalPastConsumptionDict[key] = itemMaster[key].pastConsumption;
-        }
+        // Inventario Físico de Bodega Actual (Según PDF)
+        let globalStockDict = {
+            "Antiparras": 278,
+            "Botín Seguridad": 5,
+            "Casco": 9,
+            "Guante Cabritilla": 0,
+            "Guante Multiflex": 28,
+            "Guante Nitrilo": 30,
+            "Rodillera": 16
+        };
+
+        // Consumo Histórico Mensual para medir desviación (Según PDF)
+        let globalPastConsumptionDict = {
+            "Antiparras": 25,
+            "Botín Seguridad": 4,
+            "Casco": 5,
+            "Guante Cabritilla": 50,
+            "Guante Multiflex": 30,
+            "Guante Nitrilo": 25,
+            "Rodillera": 2
+        }; 
 
         let eppData = [];
         let idCounter = 1;
         
+        // Constructor dinámico de la tabla cruzando áreas con su respectivo consumo
         areasConfigData.forEach(area => {
-            area.items.forEach(itemName => {
-                const epp = itemMaster[itemName];
-                if(epp) {
-                    eppData.push({
-                        id: idCounter++,
-                        name: itemName,
-                        area: area.name,
-                        price: epp.price,
-                        changesPerWeek: epp.changesPerWeek
-                    });
-                }
+            area.items.forEach(itemObj => {
+                const price = itemPrices[itemObj.name] || 0;
+                eppData.push({
+                    id: idCounter++,
+                    name: itemObj.name,
+                    area: area.name,
+                    price: price,
+                    changesPerWeek: itemObj.c
+                });
             });
         });
 
@@ -346,8 +393,10 @@
             let gastoTeoricoPorArea = {}; 
             let globalDemandDict = {}; 
 
-            const semanasMes = 4.4; 
-            const semanasReserva = 2; 
+            const diasMes = 20; // Modificado: 20 días hábiles (lunes a viernes)
+            const semanasMes = 4; // Modificado: 20 días = 4 semanas exactas
+            const semanasReserva = 2; // 10 días hábiles = 2 semanas
+            const horasDia = 9;
 
             // Construir áreas únicas
             const uniqueAreas = [...new Set(eppData.map(item => item.area))].sort((a, b) => a === "Toda la Planta" ? 1 : b === "Toda la Planta" ? -1 : a.localeCompare(b));
@@ -811,7 +860,7 @@
                     
                     row.values = [
                         item.area, users, item.name, item.price, item.changesPerWeek,
-                        { formula: `E${startRow}*4.4*B${startRow}` }, 
+                        { formula: `E${startRow}*4*B${startRow}` }, // Meta Mes (4 semanas)
                         { formula: `E${startRow}*2*B${startRow}` }, 
                         { formula: `CEILING(F${startRow}, 1) + CEILING(G${startRow}, 1)` }, 
                         { formula: `H${startRow}*D${startRow}` } 
@@ -884,8 +933,8 @@
                         item.area, users, item.name, 
                         (item.changesPerWeek > 0 ? (5/item.changesPerWeek) : 365),
                         costoSem,
-                        costoSem * 4.4,
-                        (costoSem * 4.4) * users
+                        costoSem * 4, // Costo mes (4 semanas)
+                        (costoSem * 4) * users
                     ];
                     row.getCell(4).numFmt = '0.0'; row.getCell(5).numFmt = '"$"#,##0'; row.getCell(6).numFmt = '"$"#,##0'; row.getCell(7).numFmt = '"$"#,##0';
                     startRow++;
@@ -980,7 +1029,7 @@
                 const areaObj = areasConfigData.find(a => a.name === item.area);
                 const users = areaObj ? areaObj.users : 1;
 
-                const consumo = item.changesPerWeek * 4.4 * users;
+                const consumo = item.changesPerWeek * 4 * users; // Meta mes (4 semanas)
                 const stockMin = item.changesPerWeek * 2 * users;
                 const reqTotal = Math.ceil(consumo) + Math.ceil(stockMin);
                 
@@ -1024,7 +1073,7 @@
 
                 const diasVidaRealRef = item.changesPerWeek > 0 ? (5 / item.changesPerWeek) : 365;
                 const costoSemanaUnit = item.changesPerWeek * item.price;
-                const costoMesUnit = costoSemanaUnit * 4.4;
+                const costoMesUnit = costoSemanaUnit * 4; // Costo mes (4 semanas)
                 const gastoAreaMes = costoMesUnit * users;
                 return [ item.area, item.name, diasVidaRealRef.toFixed(1), "$" + formatMoney(Math.round(costoSemanaUnit)), "$" + formatMoney(Math.round(costoMesUnit)), "$" + formatMoney(Math.round(gastoAreaMes)) ];
             });
