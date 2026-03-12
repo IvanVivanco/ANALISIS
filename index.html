@@ -72,7 +72,7 @@
                 Sistema de Gestión <span class="text-brand">Logística</span>
             </h1>
             <p class="text-slate-500 font-medium mt-1 text-sm tracking-wide">
-                CONTROL INTEGRADO DE PRESUPUESTOS, COMPRAS Y STOCK
+                CONTROL INTEGRADO DE PRESUPUESTOS Y STOCK GENERAL
             </p>
         </div>
         <div class="flex flex-wrap gap-3 w-full md:w-auto">
@@ -109,9 +109,9 @@
                 <p class="text-xs text-slate-500 mt-2 font-medium" id="kpi-ahorro-stock">Ahorro por Stock: $0</p>
             </div>
             <div class="p-6">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Capital en Bodega</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Capital en Bodega General</p>
                 <h2 id="kpi-capital-bodega" class="text-3xl font-black text-slate-700">$0</h2>
-                <p class="text-xs text-slate-400 mt-2">Valoración del inventario actual</p>
+                <p class="text-xs text-slate-400 mt-2">Valoración del inventario total actual</p>
             </div>
             <div class="p-6" id="alert-container">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1" id="alert-title">Estado de Inventario</p>
@@ -120,15 +120,14 @@
             </div>
         </div>
 
-        <!-- Gráficos -->
+        <!-- Gráficos Comparativos -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 border-b border-slate-200 bg-white">
             <div class="bg-white">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Distribución de Gasto por Área</h3>
-                <!-- Es importante el fondo blanco puro para que al exportar a Excel el gráfico no tenga fondo negro -->
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Comparativo Gasto por Área: Histórico vs Meta</h3>
                 <div class="relative w-full h-48 bg-white"><canvas id="areaChart" style="background-color: white;"></canvas></div>
             </div>
             <div class="bg-white">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Proyección de Inversión (6 Meses)</h3>
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Evolución de Costos y Proyección (6 Meses)</h3>
                 <div class="relative w-full h-48 bg-white"><canvas id="projectionChart" style="background-color: white;"></canvas></div>
             </div>
         </div>
@@ -138,6 +137,7 @@
             <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-brand"></span> 1. Módulo Logístico y Compras
             </h2>
+            <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">El Stock Global se distribuye en cascada a las áreas.</span>
         </div>
         <div class="table-container overflow-x-auto">
             <table class="w-full text-left border-collapse whitespace-nowrap" id="apu-table">
@@ -147,11 +147,11 @@
                         <th class="px-2 py-3 w-[280px]">Descripción (EPP)</th>
                         <th class="px-2 py-3 text-center">Usuarios</th>
                         <th class="px-2 py-3">Precio Neto</th>
-                        <th class="px-4 py-3 text-center text-slate-600">Stock Actual</th>
-                        <th class="px-2 py-3 text-center">Vida Útil</th>
+                        <th class="px-2 py-3 text-center">Vida Útil (Sugerida)</th>
                         <th class="px-3 py-3 text-center">Meta Mes</th>
-                        <th class="px-3 py-3 text-center">Reserva</th>
-                        <th class="px-4 py-3 text-center text-brand">A Comprar</th>
+                        <th class="px-3 py-3 text-center text-slate-500" title="Inventario mínimo intocable para no paralizar faena (Cobertura de 14 días)">Stock Crítico (14D)</th>
+                        <th class="px-4 py-3 text-center text-brand" title="Inventario general para todos">STOCK GLOBAL</th>
+                        <th class="px-4 py-3 text-center text-slate-700">A Comprar</th>
                         <th class="px-5 py-3 text-right text-slate-600">Costo Total ($)</th>
                     </tr>
                 </thead>
@@ -198,7 +198,7 @@
     <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         <header class="border-b border-slate-200 px-6 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white">
             <h2 class="text-slate-800 font-extrabold uppercase tracking-widest text-sm flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-slate-400"></span> 3. Análisis de Mejora Continua
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span> 3. Análisis de Mejora
             </h2>
             <div class="flex gap-6 text-right items-center">
                 <div>
@@ -252,12 +252,8 @@
             </p>
             <input type="password" id="gemini-api-key" placeholder="Pega tu API Key aquí..." class="w-full border border-slate-300 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition">
             
-            <!-- Loading indicator -->
             <div id="ai-loading" class="hidden flex-col items-center justify-center mb-4 text-indigo-600">
-                <svg class="animate-spin h-6 w-6 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                <svg class="animate-spin h-6 w-6 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                 <p class="text-xs font-bold animate-pulse">La IA está analizando los datos...</p>
             </div>
 
@@ -299,7 +295,9 @@
             let alertasQuiebre = 0; let totalFugaMensual = 0;
             let totalGastoHistorico = 0; let totalGastoProyectadoMejora = 0;
             
-            const gastosPorArea = {}; const diasMes = 22; const diasBuffer = 7; const horasDia = 9;
+            const gastoTeoricoPorArea = {}; 
+            const gastoHistoricoPorArea = {};
+            const diasMes = 22; const diasBuffer = 7; const horasDia = 9;
             const dataWithIndex = eppData.map((item, index) => ({ ...item, originalIndex: index }));
             const uniqueAreas = [...new Set(dataWithIndex.map(item => item.area))].sort((a, b) => a === "Toda la Planta" ? 1 : b === "Toda la Planta" ? -1 : a.localeCompare(b));
 
@@ -337,9 +335,17 @@
                     const gastoRq = aComprar * item.price;
                     const gastoTeorico = consumo * item.price;
                     const valorBodega = item.currentStock * item.price;
+                    const gastoHistorico = item.pastConsumption * item.price;
 
-                    totalComprarNeto += gastoRq; totalGastoTeorico += gastoTeorico; totalCapitalBodega += valorBodega;
-                    if(!gastosPorArea[area]) gastosPorArea[area] = 0; gastosPorArea[area] += gastoTeorico;
+                    totalComprarNeto += gastoRq; 
+                    totalGastoTeorico += gastoTeorico; 
+                    totalCapitalBodega += valorBodega;
+                    
+                    if(!gastoTeoricoPorArea[area]) gastoTeoricoPorArea[area] = 0; 
+                    gastoTeoricoPorArea[area] += gastoTeorico;
+
+                    if(!gastoHistoricoPorArea[area]) gastoHistoricoPorArea[area] = 0;
+                    gastoHistoricoPorArea[area] += gastoHistorico;
 
                     if (item.currentStock < stockMin) alertasQuiebre++;
 
@@ -349,14 +355,14 @@
                     const row = document.createElement('tr');
                     row.className = `transition-colors group bg-white hover:bg-slate-50`;
                     row.innerHTML = `
-                        <td class="px-4 py-2 text-center"><button onclick="deleteEPP(${item.originalIndex})" class="btn-delete text-slate-300 hover:text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td>
-                        <td class="px-2 py-2"><input type="text" class="input-clean font-medium ${numColor}" value="${item.name}" onchange="updateData(${item.originalIndex}, 'name', this.value)"></td>
-                        <td class="px-2 py-2"><input type="number" min="0" class="input-clean text-center text-slate-500" value="${item.users}" onchange="updateData(${item.originalIndex}, 'users', this.value)"></td>
-                        <td class="px-2 py-2"><div class="flex items-center"><span class="text-slate-300 pl-2">$</span><input type="number" min="0" class="input-clean font-mono text-sm ${numColor}" value="${item.price}" onchange="updateData(${item.originalIndex}, 'price', this.value)"></div></td>
-                        <td class="px-4 py-2 bg-slate-50/50"><input type="number" min="0" class="text-center text-base ${stockInputClass}" value="${item.currentStock}" onchange="updateData(${item.originalIndex}, 'currentStock', this.value)"></td>
-                        <td class="px-2 py-2"><input type="number" min="1" class="input-clean text-center font-mono text-sm text-slate-500" value="${item.daysReal}" onchange="updateData(${item.originalIndex}, 'daysReal', this.value)"></td>
+                        <td class="px-4 py-2 text-center"><button onclick="deleteEPP(${item.id})" class="btn-delete text-slate-300 hover:text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td>
+                        <td class="px-2 py-2"><input type="text" class="input-clean font-medium ${numColor}" value="${item.name}" onchange="updateData(${item.id}, 'name', this.value)"></td>
+                        <td class="px-2 py-2"><input type="number" min="0" class="input-clean text-center text-slate-500" value="${item.users}" onchange="updateData(${item.id}, 'users', this.value)"></td>
+                        <td class="px-2 py-2"><div class="flex items-center"><span class="text-slate-300 pl-2">$</span><input type="number" min="0" class="input-clean font-mono text-sm ${numColor}" value="${item.price}" onchange="updateData(${item.id}, 'price', this.value)"></div></td>
+                        <td class="px-2 py-2"><input type="number" min="1" class="input-clean text-center font-mono text-sm text-slate-500" value="${item.daysReal}" onchange="updateData(${item.id}, 'daysReal', this.value)"></td>
                         <td class="px-3 py-2 text-center text-slate-500">${consumo.toFixed(1)}</td>
                         <td class="px-3 py-2 text-center text-slate-400">${stockMin}</td>
+                        <td class="px-4 py-2 bg-slate-50/50"><input type="number" min="0" class="text-center text-base ${stockInputClass}" value="${item.currentStock}" onchange="updateData(${item.id}, 'currentStock', this.value)"></td>
                         <td class="px-4 py-2 text-center font-black text-lg ${aComprar > 0 ? 'text-brand' : 'text-slate-300'}">${aComprar}</td>
                         <td class="px-5 py-2 text-right"><span class="font-bold text-base ${aComprar > 0 ? 'text-slate-800' : 'text-slate-300'}">$${formatMoney(Math.round(gastoRq))}</span></td>
                     `;
@@ -373,7 +379,7 @@
                     hrRow.className = "hover:bg-slate-50 transition-colors bg-white";
                     hrRow.innerHTML = `
                         <td class="px-6 py-3 font-medium text-slate-700">${item.name}</td>
-                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="1" class="input-clean text-center font-bold text-slate-700" value="${item.daysTheo}" onchange="updateData(${item.originalIndex}, 'daysTheo', this.value)"></td>
+                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="1" class="input-clean text-center font-bold text-slate-700" value="${item.daysTheo}" onchange="updateData(${item.id}, 'daysTheo', this.value)"></td>
                         <td class="px-4 py-3 text-center font-mono text-slate-500">${item.daysReal}</td>
                         <td class="px-4 py-3 text-center font-mono text-slate-400">$${costoHrFicha.toFixed(1)}</td>
                         <td class="px-4 py-3 text-center font-mono text-slate-800">$${costoHrReal.toFixed(1)}</td>
@@ -385,9 +391,10 @@
                     // Módulo 3 (Mejora Continua)
                     const consumoProyectado = (diasMes / item.daysReal) * item.users;
                     const gastoProyectado = consumoProyectado * item.price;
-                    const gastoHistorico = item.pastConsumption * item.price;
+                    
+                    totalGastoProyectadoMejora += gastoProyectado; 
+                    totalGastoHistorico += gastoHistorico;
 
-                    totalGastoProyectadoMejora += gastoProyectado; totalGastoHistorico += gastoHistorico;
                     const difUnidades = item.pastConsumption - consumoProyectado;
                     const impactoFinanciero = gastoHistorico - gastoProyectado;
                     const statusColor = impactoFinanciero > 0 ? 'text-red-500' : (impactoFinanciero < 0 ? 'text-emerald-500' : 'text-slate-400');
@@ -396,7 +403,7 @@
                     impRow.className = `hover:bg-slate-50 transition-colors bg-white`;
                     impRow.innerHTML = `
                         <td class="px-6 py-3 font-medium text-slate-700">${item.name}</td>
-                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="0" class="input-clean text-center font-bold text-slate-800" value="${item.pastConsumption}" onchange="updateData(${item.originalIndex}, 'pastConsumption', this.value)"></td>
+                        <td class="px-4 py-3 bg-slate-50/50"><input type="number" min="0" class="input-clean text-center font-bold text-slate-800" value="${item.pastConsumption}" onchange="updateData(${item.id}, 'pastConsumption', this.value)"></td>
                         <td class="px-4 py-3 text-center font-mono text-slate-400">${consumoProyectado.toFixed(1)}</td>
                         <td class="px-4 py-3 text-center font-mono ${statusColor}">${difUnidades > 0 ? '+' : ''}${difUnidades.toFixed(1)}</td>
                         <td class="px-4 py-3 text-right font-mono text-slate-500">$${formatMoney(Math.round(gastoHistorico))}</td>
@@ -438,12 +445,20 @@
                 document.getElementById('alert-subtitle').innerText = "Cobertura asegurada";
             }
 
-            renderCharts(gastosPorArea, totalComprarNeto, totalGastoTeorico);
+            renderCharts(gastoTeoricoPorArea, gastoHistoricoPorArea, totalComprarNeto, totalGastoTeorico, totalGastoHistorico);
         }
 
-        function updateData(index, field, value) {
-            if (field === 'name') { eppData[index][field] = value; } 
-            else { const num = parseFloat(value); if (!isNaN(num) && num >= 0) eppData[index][field] = num; }
+        function updateData(id, field, value) {
+            const index = eppData.findIndex(item => item.id === id);
+            if (index === -1) return;
+
+            if (field === 'name') { 
+                eppData[index][field] = value; 
+            } 
+            else { 
+                const num = parseFloat(value); 
+                if (!isNaN(num) && num >= 0) eppData[index][field] = num; 
+            }
             calculateAndRender();
         }
 
@@ -452,21 +467,58 @@
             eppData.forEach(item => { if (item.area === oldArea) item.area = newArea.trim(); });
             calculateAndRender();
         }
-        function addNewArea() { eppData.push({ id: Date.now(), name: "Nuevo EPP", area: "NUEVA ÁREA", price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); calculateAndRender(); }
-        function addNewEPP(areaName) { eppData.push({ id: Date.now(), name: "Nuevo Insumo", area: areaName, price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); calculateAndRender(); }
-        function deleteEPP(index) { if(confirm("¿Seguro que deseas eliminar este ítem?")) { eppData.splice(index, 1); calculateAndRender(); } }
+        
+        function addNewArea() { 
+            eppData.push({ id: Date.now(), name: "Nuevo EPP", area: "NUEVA ÁREA", price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); 
+            calculateAndRender(); 
+        }
+        
+        function addNewEPP(areaName) { 
+            eppData.push({ id: Date.now(), name: "Nuevo Insumo", area: areaName, price: 0, daysTheo: 30, daysReal: 30, users: 1, currentStock: 0, pastConsumption: 0 }); 
+            calculateAndRender(); 
+        }
+        
+        function deleteEPP(id) { 
+            if(confirm("¿Seguro que deseas eliminar este ítem?")) { 
+                eppData = eppData.filter(item => item.id !== id); 
+                calculateAndRender(); 
+            } 
+        }
 
-        function renderCharts(gastosAreaMap, gastoMes1, gastoTeorico) {
-            const labelsArea = Object.keys(gastosAreaMap);
-            const dataArea = Object.values(gastosAreaMap).map(v => Math.round(v));
+        function renderCharts(gastoTeoricoPorArea, gastoHistoricoPorArea, gastoMes1, gastoTeorico, gastoHistorico) {
+            const labelsArea = Object.keys(gastoTeoricoPorArea);
+            const dataTeorico = Object.values(gastoTeoricoPorArea).map(v => Math.round(v));
+            const dataHistorico = labelsArea.map(area => Math.round(gastoHistoricoPorArea[area] || 0));
+
             if(areaChartInstance) areaChartInstance.destroy();
             areaChartInstance = new Chart(document.getElementById('areaChart').getContext('2d'), {
-                type: 'bar', data: { labels: labelsArea, datasets: [{ label: 'Gasto Estimado ($)', data: dataArea, backgroundColor: '#ea580c', borderRadius: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                type: 'bar', 
+                data: { 
+                    labels: labelsArea, 
+                    datasets: [
+                        { label: 'Gasto Histórico (Mes Ant.)', data: dataHistorico, backgroundColor: '#94a3b8', borderRadius: 4 },
+                        { label: 'Meta APU Proyectada', data: dataTeorico, backgroundColor: '#ea580c', borderRadius: 4 }
+                    ] 
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 12 } } } 
+                }
             });
+
             if(projChartInstance) projChartInstance.destroy();
             projChartInstance = new Chart(document.getElementById('projectionChart').getContext('2d'), {
-                type: 'line', data: { labels: ['Mes 1 (Actual)', 'Mes 2', 'Mes 3', 'Mes 4', 'Mes 5', 'Mes 6'], datasets: [{ label: 'Proyección ($)', data: [gastoMes1, gastoTeorico, gastoTeorico, gastoTeorico, gastoTeorico, gastoTeorico], borderColor: '#64748b', backgroundColor: 'rgba(100, 116, 139, 0.1)', borderWidth: 2, pointBackgroundColor: '#1e293b', pointRadius: 4, fill: true, tension: 0.2 }] },
+                type: 'line', 
+                data: { 
+                    labels: ['Mes Ant. (Real)', 'Mes 1 (Inv. Actual)', 'Mes 2 (Meta)', 'Mes 3', 'Mes 4', 'Mes 5'], 
+                    datasets: [{ 
+                        label: 'Inversión Proyectada ($)', 
+                        data: [gastoHistorico, gastoMes1, gastoTeorico, gastoTeorico, gastoTeorico, gastoTeorico], 
+                        borderColor: '#64748b', backgroundColor: 'rgba(100, 116, 139, 0.1)', borderWidth: 2, 
+                        pointBackgroundColor: ['#ef4444', '#ea580c', '#1e293b', '#1e293b', '#1e293b', '#1e293b'], 
+                        pointRadius: 5, fill: true, tension: 0.2 
+                    }] 
+                },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
@@ -486,21 +538,14 @@
 
         async function processAIExport() {
             const apiKey = document.getElementById('gemini-api-key').value.trim();
-            if (!apiKey) {
-                alert("Por favor, ingresa tu API Key de Gemini.");
-                return;
-            }
-            
-            // Guardar para futuro uso
+            if (!apiKey) { alert("Por favor, ingresa tu API Key de Gemini."); return; }
             localStorage.setItem('gemini_api_key', apiKey);
 
-            // Cambiar UI a loading
             document.getElementById('ai-buttons').classList.add('hidden');
             document.getElementById('ai-loading').classList.remove('hidden');
             document.getElementById('ai-loading').classList.add('flex');
 
             try {
-                // Preparar datos para el Prompt
                 const kpiBruto = document.getElementById('kpi-total-bruto').textContent;
                 const kpiFuga = document.getElementById('kpi-fuga-capital').textContent;
                 const kpiDesv = document.getElementById('kpi-desviacion').textContent;
@@ -523,7 +568,6 @@
                 3. Entrega una recomendación operativa clave para reducir costos.
                 `;
 
-                // Llamada a la API de Gemini
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -531,11 +575,9 @@
                 });
 
                 if (!response.ok) throw new Error("Error en la conexión con Gemini. Verifica tu API Key.");
-                
                 const data = await response.json();
                 const aiAnalysis = data.candidates[0].content.parts[0].text;
 
-                // Generar Excel con IA
                 exportExcel(aiAnalysis);
                 closeAIModal();
 
@@ -543,7 +585,6 @@
                 console.error(error);
                 alert("Hubo un problema al procesar con IA: " + error.message);
             } finally {
-                // Restaurar UI
                 document.getElementById('ai-buttons').classList.remove('hidden');
                 document.getElementById('ai-loading').classList.add('hidden');
                 document.getElementById('ai-loading').classList.remove('flex');
@@ -551,68 +592,121 @@
         }
 
         // ==========================================
-        // EXPORTACIÓN A EXCEL (Dashboard + Opcional IA)
+        // EXPORTACIÓN A EXCEL (Dashboard Resumen con Gráficos y IA)
         // ==========================================
-        function exportExcel(aiReportText = false) {
-            const wb = XLSX.utils.book_new();
-            const sortedData = [...eppData].sort((a, b) => a.area.localeCompare(b.area));
+        async function exportExcel(aiReportText = false) {
+            try {
+                const wb = new ExcelJS.Workbook();
+                const ws = wb.addWorksheet('Dashboard Visual');
 
-            // Hoja 1: Matriz combinada para Dashboard Analítico
-            const ws_data = [
-                ['DASHBOARD DE CONTROL LOGÍSTICO Y ANÁLISIS DE COSTOS'],
-                [],
-                [
+                const canvasArea = document.getElementById('areaChart');
+                const canvasProj = document.getElementById('projectionChart');
+                
+                const imgAreaId = wb.addImage({ base64: canvasArea.toDataURL('image/png'), extension: 'png' });
+                const imgProjId = wb.addImage({ base64: canvasProj.toDataURL('image/png'), extension: 'png' });
+
+                ws.addImage(imgAreaId, { tl: { col: 1, row: 1 }, br: { col: 6, row: 14 } });
+                ws.addImage(imgProjId, { tl: { col: 7, row: 1 }, br: { col: 12, row: 14 } });
+
+                const headerRow = ws.getRow(16);
+                headerRow.values = [
                     'ÁREA / CARGO', 'DESCRIPCIÓN EPP', 'USUARIOS', 'PRECIO NETO ($)', 
-                    'STOCK BODEGA', 'VIDA REAL (DÍAS)', 'VIDA FICHA (DÍAS)',
+                    'VIDA ÚTIL (SUGERIDA)', 'META MES APU', 'STOCK CRÍTICO (14D)', 'STOCK BODEGA',
                     'A COMPRAR (UNID)', 'INVERSIÓN REQUERIDA ($)',
                     'COSTO/HR TEÓRICO ($)', 'COSTO/HR REAL ($)', 'FUGA APU MES ($)',
-                    'CONS. MES ANTERIOR', 'META MES APU', 'DESVIACIÓN (UNID)'
-                ]
-            ];
-
-            sortedData.forEach((item, i) => {
-                const r = i + 4; // Fila Excel 1-based
-                ws_data.push([
-                    item.area, item.name, item.users, item.price, item.currentStock, item.daysReal, item.daysTheo,
-                    { t: 'n', f: `MAX(0, CEILING((22/F${r})*C${r}, 1) + CEILING((7/F${r})*C${r}, 1) - E${r})` }, // A Comprar
-                    { t: 'n', f: `H${r}*D${r}` }, // Inv. Req
-                    { t: 'n', f: `D${r}/(G${r}*9)` }, // Costo Hr Teo
-                    { t: 'n', f: `D${r}/(F${r}*9)` }, // Costo Hr Real
-                    { t: 'n', f: `((22/F${r})*C${r}*D${r}) - ((22/G${r})*C${r}*D${r})` }, // Fuga APU
-                    item.pastConsumption, 
-                    { t: 'n', f: `(22/F${r})*C${r}` }, // Meta Mes
-                    { t: 'n', f: `M${r}-N${r}` } // Desviación
-                ]);
-            });
-
-            const ws = XLSX.utils.aoa_to_sheet(ws_data);
-            ws['!cols'] = [{wch: 20}, {wch: 35}, {wch: 10}, {wch: 15}, {wch: 15}, {wch: 18}, {wch: 18}, {wch: 18}, {wch: 22}, {wch: 20}, {wch: 20}, {wch: 20}, {wch: 20}, {wch: 18}, {wch: 20}];
-            XLSX.utils.book_append_sheet(wb, ws, "Dashboard Resumen");
-
-            // Si hay reporte de IA, agregar la segunda hoja
-            if (aiReportText) {
-                const ai_ws_data = [
-                    ['ANÁLISIS EJECUTIVO - GENERADO POR GOOGLE GEMINI AI'],
-                    [],
-                    [aiReportText]
+                    'CONS. MES ANTERIOR', 'DESVIACIÓN (UNID)'
                 ];
-                const ai_ws = XLSX.utils.aoa_to_sheet(ai_ws_data);
-                ai_ws['!cols'] = [{wch: 120}]; // Columna ancha para leer bien
-                XLSX.utils.book_append_sheet(wb, ai_ws, "Análisis Estratégico IA");
-            }
+                
+                headerRow.eachCell((cell) => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEA580C' } };
+                    cell.font = { color: { argb: 'FFFFFFFF' }, bold: true };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    cell.border = { top: {style:'thin'}, bottom: {style:'thin'}, left: {style:'thin'}, right: {style:'thin'} };
+                });
+                headerRow.height = 25;
 
-            XLSX.writeFile(wb, "Reporte_Logistico_Integrado.xlsx");
+                const sortedData = [...eppData].sort((a, b) => a.area.localeCompare(b.area));
+                let startDataRow = 17;
+
+                sortedData.forEach((item) => {
+                    const r = startDataRow;
+                    const row = ws.getRow(r);
+                    
+                    row.getCell(1).value = item.area;
+                    row.getCell(2).value = item.name;
+                    row.getCell(3).value = item.users;
+                    row.getCell(4).value = item.price;
+                    row.getCell(5).value = item.daysReal;
+                    
+                    row.getCell(6).value = { formula: `(22/E${r})*C${r}` }; // Meta Mes APU
+                    row.getCell(7).value = { formula: `(7/E${r})*C${r}` }; // Stock Crítico 14D
+                    row.getCell(8).value = item.currentStock; // Stock Actual
+                    row.getCell(9).value = { formula: `MAX(0, CEILING(F${r}, 1) + CEILING(G${r}, 1) - H${r})` }; // A Comprar
+                    
+                    row.getCell(10).value = { formula: `I${r}*D${r}` }; // Inv Req
+                    
+                    const vidaFicha = item.daysTheo;
+                    row.getCell(11).value = item.price / (vidaFicha * 9); // Costo Hr Teo (Estatico)
+                    row.getCell(12).value = { formula: `D${r}/(E${r}*9)` }; // Costo Hr Real
+                    
+                    row.getCell(13).value = (((22/item.daysReal)*item.users*item.price) - ((22/vidaFicha)*item.users*item.price)); // Fuga estatica
+                    
+                    row.getCell(14).value = item.pastConsumption; 
+                    row.getCell(15).value = { formula: `N${r}-F${r}` }; // Desviacion
+
+                    row.getCell(4).numFmt = '"$"#,##0';
+                    row.getCell(10).numFmt = '"$"#,##0';
+                    row.getCell(11).numFmt = '"$"#,##0.0';
+                    row.getCell(12).numFmt = '"$"#,##0.0';
+                    row.getCell(13).numFmt = '"$"#,##0';
+
+                    row.getCell(9).font = { color: { argb: 'FFEA580C' }, bold: true };
+                    startDataRow++;
+                });
+
+                ws.columns.forEach((col, idx) => {
+                    if (idx === 1) col.width = 35; 
+                    else if (idx === 0) col.width = 20; 
+                    else col.width = 18; 
+                });
+
+                if (aiReportText) {
+                    const ai_ws = wb.addWorksheet('Análisis Estratégico IA');
+                    ai_ws.getCell('A1').value = 'ANÁLISIS EJECUTIVO - GENERADO POR GOOGLE GEMINI AI';
+                    ai_ws.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FFEA580C' } };
+                    ai_ws.getCell('A3').value = aiReportText;
+                    ai_ws.getCell('A3').alignment = { wrapText: true, vertical: 'top' };
+                    ai_ws.getColumn(1).width = 120;
+                    ai_ws.getRow(3).height = 200;
+                }
+
+                const buffer = await wb.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Dashboard_Logistico_General.xlsx';
+                a.click();
+                window.URL.revokeObjectURL(url);
+
+            } catch (err) {
+                console.error(err);
+                alert("Hubo un error generando el Excel Visual.");
+            }
         }
 
         // ==========================================
-        // EXPORTACIÓN A PDF (A4 Vertical, 1 Hoja)
+        // EXPORTACIÓN A PDF (A4 Vertical, Color Deteco)
         // ==========================================
         function exportPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4'); 
             
+            const brandColor = [234, 88, 12]; 
+            const headStylesColor = { fillColor: brandColor, textColor: 255 };
+
             doc.setFontSize(16);
-            doc.setTextColor(30, 41, 59); 
+            doc.setTextColor(brandColor[0], brandColor[1], brandColor[2]); 
             doc.text("REPORTE LOGÍSTICO Y ANÁLISIS DE COSTOS EPP", 14, 15);
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139); 
@@ -620,21 +714,20 @@
 
             const sortedData = [...eppData].sort((a, b) => a.area.localeCompare(b.area));
             const generalStyles = { fontSize: 7, cellPadding: 2 };
-            const headStylesColor = { fillColor: [30, 41, 59] };
 
             // --- TABLA 1 ---
             doc.setFontSize(10); doc.setTextColor(30, 41, 59);
             doc.text("1. LOGÍSTICA DE COMPRAS (ORDEN)", 14, 28);
             const body1 = sortedData.map(item => {
                 const consumo = (22 / item.daysReal) * item.users;
-                const min = Math.ceil((7 / item.daysReal) * item.users);
-                const aComprar = Math.max(0, Math.ceil(consumo) + min - item.currentStock);
-                return [ item.area, item.name, item.users, "$" + formatMoney(item.price), item.currentStock, item.daysReal, aComprar, "$" + formatMoney(aComprar * item.price) ];
+                const stockMin = Math.ceil((7 / item.daysReal) * item.users);
+                const aComprar = Math.max(0, Math.ceil(consumo) + stockMin - item.currentStock);
+                return [ item.area, item.name, item.users, "$" + formatMoney(item.price), item.daysReal, consumo.toFixed(1), stockMin, item.currentStock, aComprar, "$" + formatMoney(aComprar * item.price) ];
             });
             doc.autoTable({
-                head: [['ÁREA', 'DESCRIPCIÓN', 'USU.', 'PRECIO', 'STOCK', 'VIDA', 'A COMPRAR', 'TOTAL ($)']],
+                head: [['ÁREA', 'DESCRIPCIÓN', 'USU.', 'PRECIO', 'VIDA', 'META', 'STK. CRÍTICO', 'STOCK', 'A COMPRAR', 'TOTAL ($)']],
                 body: body1, startY: 31, theme: 'grid', styles: generalStyles, headStyles: headStylesColor,
-                columnStyles: { 0: { fontStyle: 'bold' }, 6: { fontStyle: 'bold', textColor: [234, 88, 12] }, 7: { halign: 'right' } }
+                columnStyles: { 0: { fontStyle: 'bold' }, 8: { fontStyle: 'bold', textColor: brandColor }, 9: { halign: 'right' } }
             });
 
             // --- TABLA 2 ---
@@ -656,7 +749,7 @@
             // --- TABLA 3 ---
             nextY = doc.lastAutoTable.finalY + 10;
             doc.setFontSize(10); doc.setTextColor(30, 41, 59);
-            doc.text("3. ANÁLISIS HISTÓRICO VS APU", 14, nextY);
+            doc.text("3. ANÁLISIS DE MEJORA", 14, nextY);
             const body3 = sortedData.map(item => {
                 const consProy = (22 / item.daysReal) * item.users;
                 const impFinan = (item.pastConsumption * item.price) - (consProy * item.price);
@@ -668,7 +761,7 @@
                 columnStyles: { 0: { fontStyle: 'bold' }, 5: { halign: 'right', fontStyle: 'bold' } }
             });
 
-            doc.save("Reporte_Logistico_Vertical.pdf");
+            doc.save("Reporte_Logistico_Deteco_Vertical.pdf");
         }
 
         window.onload = calculateAndRender;
